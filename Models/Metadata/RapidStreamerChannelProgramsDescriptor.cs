@@ -10,18 +10,31 @@ namespace RapidStreamer.Clients.DotNet.Models.Metadata
 #endif
         class RapidStreamerChannelProgramsDescriptor
     {
-        [JsonProperty, JsonInclude] public int Index { get; private set; }
+        [JsonProperty("index"), JsonPropertyName("index"), JsonInclude]
+        public int Index { get; private set; }
 
-        [JsonProperty, JsonInclude] public string Name { get; private set; } = null!;
 
-        [JsonProperty, JsonInclude] public RapidStreamerChannelFieldType Type { get; private set; }
+        [JsonProperty("name"), JsonPropertyName("name"), JsonInclude]
+        public string Name { get; private set; } = null!;
 
-        [JsonProperty, JsonInclude] public string? Description { get; private set; }
 
-        [JsonProperty, JsonInclude] public string? Table { get; private set; }
+        [JsonProperty("type"), JsonPropertyName("type"), JsonInclude]
+        public RapidStreamerChannelFieldType Type { get; private set; }
 
-        [JsonProperty, JsonInclude] public bool IsSubscribingKey { get; private set; }
 
-        [JsonProperty, JsonInclude] public bool IsSubscribingField { get; private set; }
+        [JsonProperty("description"), JsonPropertyName("description"), JsonInclude]
+        public string? Description { get; private set; }
+
+
+        [JsonProperty("table"), JsonPropertyName("table"), JsonInclude]
+        public string? Table { get; private set; }
+
+
+        [JsonProperty("isSubscribingKey"), JsonPropertyName("isSubscribingKey"), JsonInclude]
+        public bool IsSubscribingKey { get; private set; }
+
+
+        [JsonProperty("isSubscribingField"), JsonPropertyName("isSubscribingField"), JsonInclude]
+        public bool IsSubscribingField { get; private set; }
     }
 }

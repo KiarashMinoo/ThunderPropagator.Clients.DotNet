@@ -9,6 +9,7 @@ namespace RapidStreamer.Clients.DotNet.Models.Metadata
 #endif
         class RapidStreamerChannelAuthorization
     {
-        [JsonProperty, JsonInclude] public bool IsEnabled { get; internal init; }
+        [JsonProperty("isEnabled"), JsonPropertyName("isEnabled"), JsonInclude]
+        public bool IsEnabled { get; private set; }
     }
 }

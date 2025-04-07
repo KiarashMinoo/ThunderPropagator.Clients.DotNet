@@ -10,8 +10,11 @@ namespace RapidStreamer.Clients.DotNet.Models.Metadata
 #endif
         class RapidStreamerChannelAuthentication
     {
-        [JsonProperty, JsonInclude] public bool IsEnabled { get; private set; }
+        [JsonProperty("isEnabled"), JsonPropertyName("isEnabled"), JsonInclude]
+        public bool IsEnabled { get; private set; }
 
-        [JsonProperty, JsonInclude] public RapidStreamerChannelAuthenticationType AuthenticationType { get; set; }
+
+        [JsonProperty("authenticationType"), JsonPropertyName("authenticationType"), JsonInclude]
+        public RapidStreamerChannelAuthenticationType AuthenticationType { get; private set; }
     }
 }
