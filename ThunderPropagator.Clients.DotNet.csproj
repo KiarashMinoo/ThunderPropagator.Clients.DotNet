@@ -7,6 +7,18 @@
 
     <ItemGroup>
         <PackageReference Include="$(BuildingBlocksPackageId)" Version="$(BuildingBlocksVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Tests\**" />
     </ItemGroup>    
 
 </Project>
