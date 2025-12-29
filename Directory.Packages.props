@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  
+  <!-- Central package versions - currently managed in project files due to platform-specific packages -->
+  <!-- ThunderPropagator.BuildingBlocks version controlled in project file due to dynamic package ID -->
+  
+</Project>

@@ -1,7 +1,11 @@
 # ThunderPropagator .NET Client Library - AI Coding Agent Guide
 
 ## Project Overview
-Real-time data streaming client library for .NET 8/9 supporting WebSocket, QUIC, and InfiniteDataStream protocols. Distributed as multi-platform NuGet packages (ARM64, x64, x86, AnyCPU).
+Real-time data streaming client library for .NET 8/9/10 supporting WebSocket, QUIC, and InfiniteDataStream protocols. Distributed as multi-platform NuGet packages (ARM64, x64, x86, AnyCPU).
+
+**Current Version**: `1.0.1-beta.14`  
+**ThunderPropagator Framework Version**: `1.0.1-beta.15`  
+**BuildingBlocks Version**: `1.0.1-beta.14`
 
 ## Core Architecture
 
@@ -41,21 +45,24 @@ ThunderPropagatorClient (protocol-agnostic facade)
 
 ### ThunderPropagator.BuildingBlocks
 Core dependency providing foundational utilities:
-- `ServiceConfiguration`: Base for all configuration classes
-- `DisposableObject`: Base for disposable resources
-- `BindingDictionary<TKey, TValue>`: Thread-safe dictionary
+- `ServiceConfiguration`: Base for all configuration classes with `Get<T>()`/`Set()` pattern
+- `DisposableObject`: Base for disposable resources with sync/async disposal
+- `BindingDictionary<TKey, TValue>`: Thread-safe dictionary implementation
+- `FeederMessage`: Dictionary-based message abstraction with correlation ID
+- `Telemetry`: OpenTelemetry integration (Activities, Counters, Histograms)
 - `ToNJson()`/`FromNJson<T>()`: JSON serialization helpers (uses Newtonsoft.Json)
 - Ciphering utilities: AES, RSA encryption/decryption
+- Serialization helpers: JSON, YAML, ProtoBuf, MessagePack support
 
-**Platform-specific packaging**: Debug builds reference `ThunderPropagator.BuildingBlocks.Debug[.Platform]`, release builds reference `ThunderPropagator.BuildingBlocks[.Platform]` (see [ThunderPropagator.Clients.DotNet.csproj](ThunderPropagator.Clients.DotNet.csproj) lines 47-58).
+**Platform-specific packaging**: Debug builds reference `ThunderPropagator.BuildingBlocks.Debug[.Platform]`, release builds reference `ThunderPropagator.BuildingBlocks[.Platform]` (see [ThunderPropagator.Clients.DotNet.csproj](ThunderPropagator.Clients.DotNet.csproj)).
 
-### Custom NuGet Source
-Uses private feed `https://nuget.thunderpropagator.com/v3/index.json` for ThunderPropagator packages. Configured in [nuget.config](nuget.config) with GitHub fallback for legacy ThunderPropagator packages.
+### NuGet Source
+Uses GitHub Packages feed `https://nuget.pkg.github.com/KiarashMinoo/index.json` for ThunderPropagator packages. Configured in [nuget.config](nuget.config).
 
 ## Build Configuration
 
 ### Multi-Platform/Multi-Framework
-- Target frameworks: `net8.0`, `net9.0`
+- Target frameworks: `net8.0`, `net9.0`, `net10.0`
 - Platforms: AnyCPU, x86, x64, ARM64
 - Configurations: Debug, Release
 

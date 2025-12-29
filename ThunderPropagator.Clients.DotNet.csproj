@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup Label="ThunderPropagatorPackages">
+        <BuildingBlocksVersion>1.0.1-beta.14</BuildingBlocksVersion>
         <BuildingBlocksPackageId>ThunderPropagator.BuildingBlocks$(PackageIdConfigurationSuffix)$(PackageIdPlatformSuffix)</BuildingBlocksPackageId>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="$(BuildingBlocksPackageId)" Version="1.0.1-beta.14" />
+        <PackageReference Include="$(BuildingBlocksPackageId)" Version="$(BuildingBlocksVersion)" />
     </ItemGroup>    
 
 </Project>

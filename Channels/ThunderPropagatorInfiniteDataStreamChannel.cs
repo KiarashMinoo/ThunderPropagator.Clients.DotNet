@@ -71,11 +71,13 @@ namespace ThunderPropagator.Clients.DotNet.Channels
                             await ThunderPropagatorInfiniteDataStreamConnection.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken: CancellationToken.None);
                         var chunkedEncodingReadStream = await httpResponseMessage.Content.ReadAsStreamAsync(CancellationToken.None);
                         using StreamReader streamReader = new(chunkedEncodingReadStream);
-                        while (!streamReader.EndOfStream &&
-                               ThunderPropagatorConnection.ConnectionState is ThunderPropagatorConnectionState.Connecting or ThunderPropagatorConnectionState.Open
+                        while (ThunderPropagatorConnection.ConnectionState is ThunderPropagatorConnectionState.Connecting or ThunderPropagatorConnectionState.Open
                                    or ThunderPropagatorConnectionState.HasError)
                         {
                             var line = await streamReader.ReadLineAsync(CancellationToken.None);
+                            if (line is null)
+                                break;
+                            
                             if (!string.IsNullOrWhiteSpace(line))
                             {
                                 count++;

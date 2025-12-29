@@ -85,13 +85,13 @@ if ($env:GITHUB_OUTPUT) {
 
 # Resolve solution file
 if (-not $SolutionPath) {
-  # Ensure the result is always an array so .Count works even when a single file is returned
-  $slnFiles = @(Get-ChildItem -Filter '*.sln' -File | Select-Object -ExpandProperty Name)
-  if ($slnFiles.Count -eq 0) {
+  # Ensure the result is always an array so .Count/.Length works even when a single file is returned
+  [array]$slnFiles = Get-ChildItem -Filter '*.sln' -File | Select-Object -ExpandProperty Name
+  if ($null -eq $slnFiles -or $slnFiles.Length -eq 0) {
     Write-Error "No .sln file found at repo root. Specify -SolutionPath."
     exit 1
   }
-  elseif ($slnFiles.Count -gt 1) {
+  elseif ($slnFiles.Length -gt 1) {
     Write-Error "Multiple .sln files found: $($slnFiles -join ', '). Specify -SolutionPath."
     exit 1
   }
@@ -182,15 +182,17 @@ New-Item -ItemType File -Path $markerOk -Force | Out-Null
 
 # Summary
 Write-Host "`n=== Pack Complete ===" -ForegroundColor Green
-$packages = Get-ChildItem -Path $OutputDir -Filter '*.nupkg' | Select-Object -ExpandProperty Name
-Write-Host "Packages created ($($packages.Count)):"
-foreach ($pkg in $packages) {
-    Write-Host "  - $pkg" -ForegroundColor Cyan
+[array]$packages = Get-ChildItem -Path $OutputDir -Filter '*.nupkg' | Select-Object -ExpandProperty Name
+if ($null -ne $packages -and $packages.Length -gt 0) {
+    Write-Host "Packages created ($($packages.Length)):"
+    foreach ($pkg in $packages) {
+        Write-Host "  - $pkg" -ForegroundColor Cyan
+    }
 }
 
-$symbols = Get-ChildItem -Path $OutputDir -Filter '*.snupkg' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
-if ($symbols) {
-    Write-Host "Symbols created ($($symbols.Count)):"
+[array]$symbols = Get-ChildItem -Path $OutputDir -Filter '*.snupkg' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
+if ($null -ne $symbols -and $symbols.Length -gt 0) {
+    Write-Host "Symbols created ($($symbols.Length)):"
     foreach ($sym in $symbols) {
         Write-Host "  - $sym" -ForegroundColor Cyan
     }
