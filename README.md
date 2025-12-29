@@ -12,6 +12,7 @@ These libraries support **.NET 9** and **.NET 8**, and are configured to work ac
 - [Overview](#overview)
 - [Features](#features)
 - [Supported Platforms](#supported-platforms)
+- [Documentation](#documentation)
 - [Installation](#installation)
 - [License](#license)
 
@@ -51,6 +52,48 @@ The projects support the following platforms:
 - **AnyCPU**
 
 Both **Debug** and **Release** configurations are available for all platforms.
+
+---
+
+## Documentation
+
+Comprehensive documentation for the ThunderPropagator.Clients.DotNet library is available under [`/docs`](docs/README.md). The documentation provides detailed API references, usage examples, diagrams, and architecture guides.
+
+### Documentation Catalog
+
+- **[Root / ThunderPropagatorClient](docs/README.md)** `Types:1` `Files:1` `Diagrams:✓`
+  - Protocol-agnostic client facade implementing three-layer architecture
+  
+- **[Clients](docs/Clients/README.md)** `Types:3` `Files:3` `Diagrams:✓`
+  - Protocol-specific client facades (WebSocket, QUIC, InfiniteDataStream)
+  
+- **[Channels](docs/Channels/README.md)** `Types:3` `Files:3` `Diagrams:✓`
+  - Logical communication channels with subscriptions and encryption
+  
+- **[Connections](docs/Connections/README.md)** `Types:6` `Files:6` `Diagrams:✓`
+  - Transport layer implementations for each protocol
+  - [WebSocket](docs/Connections/WebSocket/README.md) `Types:2` `Files:2` `Diagrams:✓`
+  - [Quic](docs/Connections/Quic/README.md) `Types:2` `Files:2` `Diagrams:✓`
+  - [InfiniteDataStream](docs/Connections/InfiniteDataStream/README.md) `Types:2` `Files:2` `Diagrams:✓`
+  
+- **[Infrastructure](docs/Infrastructure/README.md)** `Types:12` `Files:12` `Diagrams:✓`
+  - Core abstractions and base implementations
+  - [Channels](docs/Infrastructure/Channels/README.md) `Types:2` `Files:2` `Diagrams:✓`
+  - [Connections](docs/Infrastructure/Connections/README.md) `Types:3` `Files:3` `Diagrams:✓`
+  - [Loggers](docs/Infrastructure/Loggers/README.md) `Types:4` `Files:4` `Diagrams:✗`
+  - [Requests](docs/Infrastructure/Requests/README.md) `Types:2` `Files:2` `Diagrams:✗`
+  - [Responses](docs/Infrastructure/Responses/README.md) `Types:1` `Files:1` `Diagrams:✗`
+  
+- **[Models](docs/Models/README.md)** `Types:36` `Files:36` `Diagrams:✓`
+  - Data models, enumerations, and structures
+  - [Enums](docs/Models/Enums/README.md) `Types:10` `Files:10` `Diagrams:✗`
+  - [Metadata](docs/Models/Metadata/README.md) `Types:7` `Files:7` `Diagrams:✓`
+  - [Connections](docs/Models/Connections/README.md) `Types:2` `Files:2` `Diagrams:✗`
+  - [ReceivedMessage](docs/Models/ReceivedMessage/README.md) `Types:2` `Files:2` `Diagrams:✗`
+  - [Requests](docs/Models/Requests/README.md) `Types:5` `Files:5` `Diagrams:✗`
+  - [Subscriptions](docs/Models/Subscriptions/README.md) `Types:5` `Files:5` `Diagrams:✓`
+
+**Last generated:** December 29, 2025
 
 ---
 
