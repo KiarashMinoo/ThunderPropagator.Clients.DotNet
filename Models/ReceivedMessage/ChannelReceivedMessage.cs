@@ -1,4 +1,4 @@
-﻿namespace RapidStreamer.Clients.DotNet.Models.ReceivedMessage
+namespace ThunderPropagator.Clients.DotNet.Models.ReceivedMessage
 {
     public
 #if !DEBUG

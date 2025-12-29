@@ -1,4 +1,4 @@
-﻿namespace RapidStreamer.Clients.DotNet.Models
+namespace ThunderPropagator.Clients.DotNet.Models
 {
     public
 #if !DEBUG

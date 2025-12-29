@@ -1,4 +1,4 @@
-﻿namespace RapidStreamer.Clients.DotNet.Infrastructure.Loggers
+namespace ThunderPropagator.Clients.DotNet.Infrastructure.Loggers
 {
     public interface ILoggerProvider : IDisposable
     {

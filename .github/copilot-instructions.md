@@ -1,4 +1,4 @@
-# RapidStreamer .NET Client Library - AI Coding Agent Guide
+# ThunderPropagator .NET Client Library - AI Coding Agent Guide
 
 ## Project Overview
 Real-time data streaming client library for .NET 8/9 supporting WebSocket, QUIC, and InfiniteDataStream protocols. Distributed as multi-platform NuGet packages (ARM64, x64, x86, AnyCPU).
@@ -8,38 +8,38 @@ Real-time data streaming client library for .NET 8/9 supporting WebSocket, QUIC,
 ### Three-Layer Pattern
 All protocol implementations follow this hierarchy:
 ```
-RapidStreamerClient (protocol-agnostic facade)
-├── Connection Layer (AbstractRapidStreamerConnection<T>)
-│   ├── RapidStreamerWebSocketConnection
-│   ├── RapidStreamerQuicConnection
-│   └── RapidStreamerInfiniteDataStreamConnection
-├── Channel Layer (AbstractRapidStreamerChannel)
-│   ├── RapidStreamerWebSocketChannel
-│   ├── RapidStreamerQuicChannel
-│   └── RapidStreamerInfiniteDataStreamChannel
+ThunderPropagatorClient (protocol-agnostic facade)
+├── Connection Layer (AbstractThunderPropagatorConnection<T>)
+│   ├── ThunderPropagatorWebSocketConnection
+│   ├── ThunderPropagatorQuicConnection
+│   └── ThunderPropagatorInfiniteDataStreamConnection
+├── Channel Layer (AbstractThunderPropagatorChannel)
+│   ├── ThunderPropagatorWebSocketChannel
+│   ├── ThunderPropagatorQuicChannel
+│   └── ThunderPropagatorInfiniteDataStreamChannel
 └── Client Layer (protocol-specific facades)
-    ├── RapidStreamerWebSocketClient
-    ├── RapidStreamerQuicClient
-    └── RapidStreamerInfiniteDataStreamClient
+    ├── ThunderPropagatorWebSocketClient
+    ├── ThunderPropagatorQuicClient
+    └── ThunderPropagatorInfiniteDataStreamClient
 ```
 
 - **Connection**: Manages protocol-specific transport, connection state, message receipt
 - **Channel**: Handles logical communication channels, subscriptions, encryption, metadata
-- **Client**: Protocol-specific entry point, delegates to `RapidStreamerClient` base
+- **Client**: Protocol-specific entry point, delegates to `ThunderPropagatorClient` base
 
 ### Key Design Patterns
 
-**Configuration inheritance**: All configurations extend `AbstractRapidStreamerConfiguration` (itself extends `ServiceConfiguration` from BuildingBlocks). Use getter/setter pattern with `Get<T>()` and `Set()` methods (see [RapidStreamerWebSocketConnectionConfiguration.cs](Connections/WebSocket/RapidStreamerWebSocketConnectionConfiguration.cs)).
+**Configuration inheritance**: All configurations extend `AbstractThunderPropagatorConfiguration` (itself extends `ServiceConfiguration` from BuildingBlocks). Use getter/setter pattern with `Get<T>()` and `Set()` methods (see [ThunderPropagatorWebSocketConnectionConfiguration.cs](Connections/WebSocket/ThunderPropagatorWebSocketConnectionConfiguration.cs)).
 
 **Conditional sealing**: Classes use `#if !DEBUG sealed #endif` to allow inheritance in debug builds only (e.g., [CipheringMetadata.cs](Models/CipheringMetadata.cs), all Client classes).
 
-**Abstract internal implementations**: Core logic in `AbstractRapidStreamerConnection<T>` and `AbstractRapidStreamerChannel` marked `internal abstract`, with public interfaces exposed via `IRapidStreamerConnection` and `IRapidStreamerChannel`.
+**Abstract internal implementations**: Core logic in `AbstractThunderPropagatorConnection<T>` and `AbstractThunderPropagatorChannel` marked `internal abstract`, with public interfaces exposed via `IThunderPropagatorConnection` and `IThunderPropagatorChannel`.
 
 **INotifyPropertyChanged**: All major components implement this with `SetField<T>` helper for property change notifications.
 
 ## Dependencies
 
-### RapidStreamer.BuildingBlocks
+### ThunderPropagator.BuildingBlocks
 Core dependency providing foundational utilities:
 - `ServiceConfiguration`: Base for all configuration classes
 - `DisposableObject`: Base for disposable resources
@@ -47,10 +47,10 @@ Core dependency providing foundational utilities:
 - `ToNJson()`/`FromNJson<T>()`: JSON serialization helpers (uses Newtonsoft.Json)
 - Ciphering utilities: AES, RSA encryption/decryption
 
-**Platform-specific packaging**: Debug builds reference `RapidStreamer.BuildingBlocks.Debug[.Platform]`, release builds reference `RapidStreamer.BuildingBlocks[.Platform]` (see [RapidStreamer.Clients.DotNet.csproj](RapidStreamer.Clients.DotNet.csproj) lines 47-58).
+**Platform-specific packaging**: Debug builds reference `ThunderPropagator.BuildingBlocks.Debug[.Platform]`, release builds reference `ThunderPropagator.BuildingBlocks[.Platform]` (see [ThunderPropagator.Clients.DotNet.csproj](ThunderPropagator.Clients.DotNet.csproj) lines 47-58).
 
 ### Custom NuGet Source
-Uses private feed `https://nuget.rapidstreamer.com/v3/index.json` for RapidStreamer packages. Configured in [nuget.config](nuget.config) with GitHub fallback for legacy ThunderPropagator packages.
+Uses private feed `https://nuget.thunderpropagator.com/v3/index.json` for ThunderPropagator packages. Configured in [nuget.config](nuget.config) with GitHub fallback for legacy ThunderPropagator packages.
 
 ## Build Configuration
 
@@ -60,10 +60,10 @@ Uses private feed `https://nuget.rapidstreamer.com/v3/index.json` for RapidStrea
 - Configurations: Debug, Release
 
 **NuGet package naming**:
-- Debug AnyCPU: `RapidStreamer.Clients.DotNet.Debug`
-- Debug platform-specific: `RapidStreamer.Clients.DotNet.Debug.{Platform}`
-- Release AnyCPU: `RapidStreamer.Clients.DotNet`
-- Release platform-specific: `RapidStreamer.Clients.DotNet.{Platform}`
+- Debug AnyCPU: `ThunderPropagator.Clients.DotNet.Debug`
+- Debug platform-specific: `ThunderPropagator.Clients.DotNet.Debug.{Platform}`
+- Release AnyCPU: `ThunderPropagator.Clients.DotNet`
+- Release platform-specific: `ThunderPropagator.Clients.DotNet.{Platform}`
 
 ### Preview Features
 - `EnablePreviewFeatures=true`
@@ -83,15 +83,15 @@ dotnet build -c Release
 ### Testing Connection Protocols
 Must instantiate protocol-specific client with corresponding configuration:
 ```csharp
-var config = new RapidStreamerWebSocketConnectionConfiguration { Uri = "wss://..." };
-var client = new RapidStreamerWebSocketClient(config, loggerProvider);
+var config = new ThunderPropagatorWebSocketConnectionConfiguration { Uri = "wss://..." };
+var client = new ThunderPropagatorWebSocketClient(config, loggerProvider);
 await client.ConnectAsync();
 var channel = await client.CreateChannelAsync("channelName");
 ```
 
 ### Message Flow
 1. Connection receives raw message → `OnMessageReceived`
-2. First non-PROBE message is `RapidStreamerConnectionResponse` (sets `ConnectionInfo`)
+2. First non-PROBE message is `ThunderPropagatorConnectionResponse` (sets `ConnectionInfo`)
 3. Subsequent messages routed to channels by name via regex parsing:
    - JSON format: `{ "route": { "channel": "..." } }` → `HandleReceivedResponse`
    - CSV format: `channelName,data,...` → `HandleReceivedMessageAsync`
@@ -102,26 +102,26 @@ var channel = await client.CreateChannelAsync("channelName");
 Custom lightweight logging abstraction in `Infrastructure/Loggers/`. **Do not use Microsoft.Extensions.Logging**. Use `ILoggerProvider.CreateLogger()` and `ILogger.Log()`.
 
 ### Enums
-All enums in `Models/Enums/` with `RapidStreamer` prefix. Key states:
-- `RapidStreamerConnectionState`: Ready, Connecting, Open, Closed, HasError
-- `RapidStreamerChannelState`: Ready, Opening, Open, Closing, Closed
-- `RapidStreamerProtocolType`: WebSocket, Quic, InfiniteDataStream
+All enums in `Models/Enums/` with `ThunderPropagator` prefix. Key states:
+- `ThunderPropagatorConnectionState`: Ready, Connecting, Open, Closed, HasError
+- `ThunderPropagatorChannelState`: Ready, Opening, Open, Closing, Closed
+- `ThunderPropagatorProtocolType`: WebSocket, Quic, InfiniteDataStream
 
 ### Event Handlers
 Typed delegates for all events (not generic `EventHandler<T>`):
-- `RapidStreamerConnectionStateChangedEventHandler`
-- `RapidStreamerChannelStatusChangedEventHandler`
-- `RapidStreamerMessageReceivedEventHandler` (async Task-based)
+- `ThunderPropagatorConnectionStateChangedEventHandler`
+- `ThunderPropagatorChannelStatusChangedEventHandler`
+- `ThunderPropagatorMessageReceivedEventHandler` (async Task-based)
 
 ### Message Parsing
 Use compiled regex for performance:
 - `[GeneratedRegex(..., RegexOptions.Compiled)]` partial static methods
-- See [RapidStreamerClient.cs](RapidStreamerClient.cs) line 27, [AbstractRapidStreamerChannel.cs](Infrastructure/Channels/AbstractRapidStreamerChannel.cs) line 47
+- See [ThunderPropagatorClient.cs](ThunderPropagatorClient.cs) line 27, [AbstractThunderPropagatorChannel.cs](Infrastructure/Channels/AbstractThunderPropagatorChannel.cs) line 47
 
 ## Important Implementation Details
 
 ### Connection Lifecycle
-Connections auto-reconnect with 24-hour timeout on receive loop (see [AbstractRapidStreamerConnection.cs](Infrastructure/Connections/AbstractRapidStreamerConnection.cs) lines 96-102). PROBE messages are filtered out in `OnMessageReceived`.
+Connections auto-reconnect with 24-hour timeout on receive loop (see [AbstractThunderPropagatorConnection.cs](Infrastructure/Connections/AbstractThunderPropagatorConnection.cs) lines 96-102). PROBE messages are filtered out in `OnMessageReceived`.
 
 ### Channel Encryption
 Channels support two encryption layers:
@@ -131,7 +131,7 @@ Channels support two encryption layers:
 Built dynamically via `BuildAuthEncryptor()` and `BuildMessageDecryptor()` when metadata received.
 
 ### Request/Response Tracking
-Channels maintain `BindingDictionary` of pending requests keyed by request ID. Use `RapidStreamerRequestBase` for all requests with `RapidStreamerRequestRoute` containing channel/endpoint info.
+Channels maintain `BindingDictionary` of pending requests keyed by request ID. Use `ThunderPropagatorRequestBase` for all requests with `ThunderPropagatorRequestRoute` containing channel/endpoint info.
 
 ## Anti-Patterns
 - ❌ Don't use `sealed` without `#if !DEBUG` conditional

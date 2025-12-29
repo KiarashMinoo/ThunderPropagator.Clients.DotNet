@@ -1,9 +1,9 @@
-# RapidStreamer.Clients.Net
+# ThunderPropagator.Clients.Net
 
-**RapidStreamer** is a cutting-edge software solution designed to redefine real-time data streaming. Our mission is to provide **effortless, blazingly fast, and cloud-native streaming capabilities** for maximum impact. This repository contains the foundational libraries, **RapidStreamer.Providers.DotNet.ActiveMQ**, **RapidStreamer.Providers.DotNet.Kafka**, **RapidStreamer.Providers.DotNet.Mqtt**, **RapidStreamer.Providers.DotNet.NATS**, **RapidStreamer.Providers.DotNet.Pulsar**, **RapidStreamer.Providers.DotNet.RabbitMQ**, **RapidStreamer.Providers.DotNet.RedisPubSub**, **RapidStreamer.Providers.DotNet.TcpSocket**, **RapidStreamer.Providers.DotNet.UdpClient**, **RapidStreamer.Providers.DotNet.WebApi** and **RapidStreamer.Providers.DotNet.WebSocket**, which empower developers to build scalable, high-performance streaming applications with ease.
+**ThunderPropagator** is a cutting-edge software solution designed to redefine real-time data streaming. Our mission is to provide **effortless, blazingly fast, and cloud-native streaming capabilities** for maximum impact. This repository contains the foundational libraries, **ThunderPropagator.Providers.DotNet.ActiveMQ**, **ThunderPropagator.Providers.DotNet.Kafka**, **ThunderPropagator.Providers.DotNet.Mqtt**, **ThunderPropagator.Providers.DotNet.NATS**, **ThunderPropagator.Providers.DotNet.Pulsar**, **ThunderPropagator.Providers.DotNet.RabbitMQ**, **ThunderPropagator.Providers.DotNet.RedisPubSub**, **ThunderPropagator.Providers.DotNet.TcpSocket**, **ThunderPropagator.Providers.DotNet.UdpClient**, **ThunderPropagator.Providers.DotNet.WebApi** and **ThunderPropagator.Providers.DotNet.WebSocket**, which empower developers to build scalable, high-performance streaming applications with ease.
 
 These libraries support **.NET 9** and **.NET 8**, and are configured to work across multiple platforms, including **ARM64**, **x64**, **x86**, and **AnyCPU**. They are available as **NuGet packages** and can be installed from the custom NuGet repository:
-**`https://nuget.rapidstreamer.com/v3/index.json`**.
+**`https://nuget.thunderpropagator.com/v3/index.json`**.
 
 ---
 
@@ -19,14 +19,14 @@ These libraries support **.NET 9** and **.NET 8**, and are configured to work ac
 
 ## Overview
 
-RapidStreamer is designed to revolutionize real-time data streaming by providing:
+ThunderPropagator is designed to revolutionize real-time data streaming by providing:
 
 - **Effortless Integration**: Simple and intuitive APIs for seamless integration into your applications.
 - **Blazingly Fast Performance**: Optimized for low-latency, high-throughput streaming.
 - **Cloud-Native Architecture**: Built for modern cloud environments, enabling scalability and resilience.
 - **Cross-Platform Support**: Compatible with ARM64, x64, x86, and AnyCPU platforms.
 
-Whether you're building real-time analytics, live event processing, or IoT data pipelines, RapidStreamer empowers you to deliver maximum impact with minimal effort.
+Whether you're building real-time analytics, live event processing, or IoT data pipelines, ThunderPropagator empowers you to deliver maximum impact with minimal effort.
 
 ---
 
@@ -64,14 +64,14 @@ To install the libraries as NuGet packages, you need to add the custom NuGet rep
 2. Go to **Tools** > **NuGet Package Manager** > **Package Manager Settings**.
 3. Under **Package Sources**, click the **+** button to add a new source.
 4. Enter the following details:
-  - **Name**: `RapidStreamer`
-  - **Source**: `https://nuget.rapidstreamer.com/v3/index.json`
+  - **Name**: `ThunderPropagator`
+  - **Source**: `https://nuget.thunderpropagator.com/v3/index.json`
 5. Click **Update** and then **OK**.
 
 #### Using the Command Line:
 Add the NuGet source using the following command:
 ```bash
-dotnet nuget add source --name RapidStreamer --source https://nuget.rapidstreamer.com/v3/index.json
+dotnet nuget add source --name ThunderPropagator --source https://nuget.thunderpropagator.com/v3/index.json
 ```
 
 #### Create or Update `nuget.config`
@@ -84,8 +84,8 @@ Here’s an example of what the `nuget.config` file should look like:
   <packageSources>
     <!-- Add the official NuGet.org source -->
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <!-- Add the custom RapidStreamer NuGet repository -->
-    <add key="RapidStreamer" value="https://nuget.rapidstreamer.com/v3/index.json" />
+    <!-- Add the custom ThunderPropagator NuGet repository -->
+    <add key="ThunderPropagator" value="https://nuget.thunderpropagator.com/v3/index.json" />
   </packageSources>
 </configuration>
 ```
@@ -103,15 +103,15 @@ This will list all configured NuGet sources. You should see something like this 
 Registered Sources:
   1.  nuget.org [Enabled]
       https://api.nuget.org/v3/index.json
-  2.  RapidStreamer [Enabled]
-      https://nuget.rapidstreamer.com/v3/index.json
+  2.  ThunderPropagator [Enabled]
+      https://nuget.thunderpropagator.com/v3/index.json
 ```
 
 ### Step 3: Install the NuGet Packages
 You can now install the packages using the following commands:
 
 ```bash
-dotnet add package RapidStreamer.Clients.DotNet
+dotnet add package ThunderPropagator.Clients.DotNet
 ```
 
 Alternatively, you can install the packages via the NuGet Package Manager in Visual Studio.
@@ -119,4 +119,4 @@ Alternatively, you can install the packages via the NuGet Package Manager in Vis
 ## License
 This project is licensed under the **MIT License**.
 
-© 2024 RapidStreamer. All rights reserved.
+© 2024 ThunderPropagator. All rights reserved.

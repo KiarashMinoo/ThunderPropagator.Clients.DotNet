@@ -1,4 +1,4 @@
-﻿namespace RapidStreamer.Clients.DotNet.Infrastructure.Loggers
+namespace ThunderPropagator.Clients.DotNet.Infrastructure.Loggers
 {
     /// <summary>Defines logging severity levels.</summary>
     public enum LogLevel

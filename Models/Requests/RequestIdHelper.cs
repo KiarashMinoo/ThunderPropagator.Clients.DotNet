@@ -1,4 +1,4 @@
-﻿namespace RapidStreamer.Clients.DotNet.Models.Requests
+namespace ThunderPropagator.Clients.DotNet.Models.Requests
 {
     public static class RequestIdHelper
     {

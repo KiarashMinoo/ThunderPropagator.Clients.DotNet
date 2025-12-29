@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
-namespace RapidStreamer.Clients.DotNet.Infrastructure.Loggers
+namespace ThunderPropagator.Clients.DotNet.Infrastructure.Loggers
 {
     /// <summary>
     /// Identifies a logging event. The primary identifier is the "Id" property, with the "Name" property providing a short description of this type of event.
