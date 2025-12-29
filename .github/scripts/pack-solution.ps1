@@ -183,7 +183,7 @@ New-Item -ItemType File -Path $markerOk -Force | Out-Null
 # Summary
 Write-Host "`n=== Pack Complete ===" -ForegroundColor Green
 $packagesRaw = Get-ChildItem -Path $OutputDir -Filter '*.nupkg' -ErrorAction SilentlyContinue
-[array]$packages = if ($packagesRaw) { $packagesRaw | Select-Object -ExpandProperty Name } else { @() }
+[array]$packages = if ($packagesRaw) { @($packagesRaw | Select-Object -ExpandProperty Name) } else { @() }
 if ($packages.Length -gt 0) {
     Write-Host "Packages created ($($packages.Length)):"
     foreach ($pkg in $packages) {
@@ -192,7 +192,7 @@ if ($packages.Length -gt 0) {
 }
 
 $symbolsRaw = Get-ChildItem -Path $OutputDir -Filter '*.snupkg' -ErrorAction SilentlyContinue
-[array]$symbols = if ($symbolsRaw) { $symbolsRaw | Select-Object -ExpandProperty Name } else { @() }
+[array]$symbols = if ($symbolsRaw) { @($symbolsRaw | Select-Object -ExpandProperty Name) } else { @() }
 if ($symbols.Length -gt 0) {
     Write-Host "Symbols created ($($symbols.Length)):"
     foreach ($sym in $symbols) {
