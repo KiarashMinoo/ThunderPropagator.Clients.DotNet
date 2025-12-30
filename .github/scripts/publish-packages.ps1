@@ -89,17 +89,17 @@ if (-not $NuGetSource -or -not $NuGetApiKey) {
 
 # Push .nupkg files
 Write-Host "`n--- Publishing Packages (.nupkg) ---" -ForegroundColor Yellow
-$packages = Get-ChildItem -Path $PackagesPath -Filter '*.nupkg' -ErrorAction SilentlyContinue
+[array]$packages = @(Get-ChildItem -Path $PackagesPath -Filter '*.nupkg' -ErrorAction SilentlyContinue)
 
 # Apply filter if specified
 if ($FilterPattern -and $packages) {
     $originalCount = $packages.Count
-    $packages = $packages | Where-Object { $_.Name -match $FilterPattern }
+    [array]$packages = @($packages | Where-Object { $_.Name -match $FilterPattern })
     Write-Host "Filter applied: $FilterPattern" -ForegroundColor Gray
     Write-Host "  Filtered: $originalCount → $($packages.Count) packages" -ForegroundColor Gray
 }
 
-if (-not $packages) {
+if ($packages.Count -eq 0) {
     Write-Warning "No .nupkg files found in $PackagesPath matching criteria"
 }
 else {
@@ -164,9 +164,9 @@ else {
 # Push .snupkg files (symbols)
 if (-not $SkipSymbols) {
     Write-Host "`n--- Publishing Symbols (.snupkg) ---" -ForegroundColor Yellow
-    $symbols = Get-ChildItem -Path $SymbolsPath -Filter '*.snupkg' -ErrorAction SilentlyContinue
+    [array]$symbols = @(Get-ChildItem -Path $SymbolsPath -Filter '*.snupkg' -ErrorAction SilentlyContinue)
     
-    if (-not $symbols) {
+    if ($symbols.Count -eq 0) {
         Write-Host "No .snupkg files found in $SymbolsPath" -ForegroundColor Gray
     }
     else {
