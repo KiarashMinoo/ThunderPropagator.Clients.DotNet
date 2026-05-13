@@ -1,148 +1,231 @@
-# ThunderPropagator .NET Client Library - AI Coding Agent Guide
+# ThunderPropagator - Real-Time Data Streaming
 
 ## Project Overview
-Real-time data streaming client library for .NET 8/9/10 supporting WebSocket, QUIC, and InfiniteDataStream protocols. Distributed as multi-platform NuGet packages (ARM64, x64, x86, AnyCPU).
+ThunderPropagator is a real-time data streaming solution providing protocol-agnostic abstractions for WebSocket, MQTT 5.0, QUIC, and WebTransport. The solution targets .NET 8.0, 9.0, and 10.0 with multi-platform support (AnyCPU, x86, x64, ARM64). Internal codename: **Project ARC** (Application Runtime Components).
 
-**Current Version**: `1.0.1-beta.14`  
-**ThunderPropagator Framework Version**: `1.0.1-beta.15`  
-**BuildingBlocks Version**: `1.0.1-beta.14`
+## Architecture
 
-## Core Architecture
-
-### Three-Layer Pattern
-All protocol implementations follow this hierarchy:
-```
-ThunderPropagatorClient (protocol-agnostic facade)
-├── Connection Layer (AbstractThunderPropagatorConnection<T>)
-│   ├── ThunderPropagatorWebSocketConnection
-│   ├── ThunderPropagatorQuicConnection
-│   └── ThunderPropagatorInfiniteDataStreamConnection
-├── Channel Layer (AbstractThunderPropagatorChannel)
-│   ├── ThunderPropagatorWebSocketChannel
-│   ├── ThunderPropagatorQuicChannel
-│   └── ThunderPropagatorInfiniteDataStreamChannel
-└── Client Layer (protocol-specific facades)
-    ├── ThunderPropagatorWebSocketClient
-    ├── ThunderPropagatorQuicClient
-    └── ThunderPropagatorInfiniteDataStreamClient
-```
-
-- **Connection**: Manages protocol-specific transport, connection state, message receipt
-- **Channel**: Handles logical communication channels, subscriptions, encryption, metadata
-- **Client**: Protocol-specific entry point, delegates to `ThunderPropagatorClient` base
+### Layer Structure
+- **Application Layer** (`src/ThunderPropagator.Application/`): Protocol-agnostic streaming abstractions (channels, feeders, pipelines, subscriptions)
+- **Infrastructure Layer** (`src/ThunderPropagator.Infrastructure/`): Protocol-specific implementations (WebSocket, MQTT, QUIC, WebTransport)
+- **Dependency**: Both layers depend on `ThunderPropagator.BuildingBlocks` NuGet package for core utilities (DisposableObject, EquatableObject, helpers, collections)
 
 ### Key Design Patterns
 
-**Configuration inheritance**: All configurations extend `AbstractThunderPropagatorConfiguration` (itself extends `ServiceConfiguration` from BuildingBlocks). Use getter/setter pattern with `Get<T>()` and `Set()` methods (see [ThunderPropagatorWebSocketConnectionConfiguration.cs](Connections/WebSocket/ThunderPropagatorWebSocketConnectionConfiguration.cs)).
+**1. Partial Class Channel Architecture**
+`AbstractChannel` is split across 6 files using `partial class` to organize concerns:
+- **AbstractChannel.cs** — Core properties, lifecycle, initialization
+- **AbstractChannel.Subscription.cs** — Subscription management (`AddSubscriptionAsync`, `RemoveSubscriptionAsync`)
+- **AbstractChannel.MessagesHandler.cs** — Message routing and distribution (`HandleMessageAsync`)
+- **AbstractChannel.Metadata.cs** — Metadata initialization and script execution
+- **AbstractChannel.HealthCheckSupport.cs** — Health check integration (`IHealthCheckSupport`)
+- **AbstractChannel.RecoveryHandler.cs** — Snapshot backup/restore (`IRecoveryHandler`)
 
-**Conditional sealing**: Classes use `#if !DEBUG sealed #endif` to allow inheritance in debug builds only (e.g., [CipheringMetadata.cs](Models/CipheringMetadata.cs), all Client classes).
+**2. Three-Level Channel Inheritance**
+Channels use progressive specialization:
+```csharp
+// Base: No generics
+AbstractChannel : DisposableObject, IChannel
 
-**Abstract internal implementations**: Core logic in `AbstractThunderPropagatorConnection<T>` and `AbstractThunderPropagatorChannel` marked `internal abstract`, with public interfaces exposed via `IThunderPropagatorConnection` and `IThunderPropagatorChannel`.
+// Typed metadata
+AbstractChannel<TChannelMetadata> : AbstractChannel
 
-**INotifyPropertyChanged**: All major components implement this with `SetField<T>` helper for property change notifications.
+// Full specialization
+AbstractChannel<TChannelMetadata, TChannelConfiguration> : AbstractChannel<TChannelMetadata>
+```
+See [AbstractChannel.cs](src/ThunderPropagator.Application/Channels/AbstractChannel.cs) and [docs](docs/Application/Channels/README.md)
 
-## Dependencies
+**3. Protocol Container Pattern**
+Protocol implementations use container/handler separation:
+- **Container**: Manages connection pool, background jobs (cleanup, health probes, send queues), implements `IHealthCheckSupport`
+- **Handler**: Wraps individual connection, implements protocol-specific sending
+- Factory method: `CreateConnectionHandler()` in container creates handlers
+- Example: `WebSocketConnectionContainer` → `WebSocketConnectionHandler`
 
-### ThunderPropagator.BuildingBlocks
-Core dependency providing foundational utilities:
-- `ServiceConfiguration`: Base for all configuration classes with `Get<T>()`/`Set()` pattern
-- `DisposableObject`: Base for disposable resources with sync/async disposal
-- `BindingDictionary<TKey, TValue>`: Thread-safe dictionary implementation
-- `FeederMessage`: Dictionary-based message abstraction with correlation ID
-- `Telemetry`: OpenTelemetry integration (Activities, Counters, Histograms)
-- `ToNJson()`/`FromNJson<T>()`: JSON serialization helpers (uses Newtonsoft.Json)
-- Ciphering utilities: AES, RSA encryption/decryption
-- Serialization helpers: JSON, YAML, ProtoBuf, MessagePack support
+**4. Event-Driven Configuration with C# Scripting**
+`AbstractChannelConfiguration` supports C# script hooks via `ChannelConfigurationEvents`:
+```csharp
+public class StockChannelConfiguration : AbstractChannelConfiguration
+{
+    public StockChannelConfiguration()
+    {
+        Events.MessageEmitting = @"(channel, message) => {
+            message[""timestamp""] = DateTime.UtcNow;
+        }";
+    }
+}
+```
+Scripts compiled at runtime using `Microsoft.CodeAnalysis.CSharp.Scripting`
 
-**Platform-specific packaging**: Debug builds reference `ThunderPropagator.BuildingBlocks.Debug[.Platform]`, release builds reference `ThunderPropagator.BuildingBlocks[.Platform]` (see [ThunderPropagator.Clients.DotNet.csproj](ThunderPropagator.Clients.DotNet.csproj)).
+**5. Subscription Key/Field Filtering**
+Messages filtered by key values and selected fields:
+- **SubscribedKey**: Key-value pairs (e.g., `symbol=AAPL`)
+- **SubscribedFields**: Dictionary of field descriptors (only selected fields sent)
+- **SubscriptionMode**: Full (all fields) or Incremental (changed fields only)
+- Managed by `Subscription` and `SubscriptionCollection` in [Channels/Subscribers](src/ThunderPropagator.Application/Channels/Subscribers/)
 
-### NuGet Source
-Uses GitHub Packages feed `https://nuget.pkg.github.com/KiarashMinoo/index.json` for ThunderPropagator packages. Configured in [nuget.config](nuget.config).
+**6. Pipeline Chain Pattern**
+Request/response processing uses middleware-style pipelines:
+- **IReceivePipeline**: Processes incoming requests (subscribe, unsubscribe, custom actions)
+- **IPushPipeline**: Transforms outgoing messages before protocol sending
+- Delegates: `ReceivePipelineDelegate`, `PushPipelineDelegate`
+- Infrastructure provides: `SubscribePipeline`, `UnsubscribePipeline`, `AuthorizationPipeline`
 
-## Build Configuration
+## Build & Package Management
 
-### Multi-Platform/Multi-Framework
-- Target frameworks: `net8.0`, `net9.0`, `net10.0`
-- Platforms: AnyCPU, x86, x64, ARM64
-- Configurations: Debug, Release
+### Central Package Management
+- **Versioning**: All versions in `Directory.Build.props` (e.g., `1.0.1-beta.12`)
+- **Dependencies**: Centrally managed in `Directory.Packages.props` with `ManagePackageVersionsCentrally`
+- **Multi-targeting**: Projects target `net8.0;net9.0;net10.0` via `TargetFrameworks` in `Directory.Build.props`
+- **Multi-platform**: Supports AnyCPU, x86, x64, ARM64 via `Platforms` property
+- **BuildingBlocks Dependency**: Uses `$(BuildingBlocksPackageId)` variable for package reference
 
-**NuGet package naming**:
-- Debug AnyCPU: `ThunderPropagator.Clients.DotNet.Debug`
-- Debug platform-specific: `ThunderPropagator.Clients.DotNet.Debug.{Platform}`
-- Release AnyCPU: `ThunderPropagator.Clients.DotNet`
-- Release platform-specific: `ThunderPropagator.Clients.DotNet.{Platform}`
-
-### Preview Features
-- `EnablePreviewFeatures=true`
-- `RequiresPreviewFeatures` assembly attribute ([AssemblyInfo.cs](AssemblyInfo.cs))
-- `LangVersion=latestmajor`
-
-## Critical Workflows
-
-### Building
+### Build Commands
 ```powershell
 dotnet restore
-dotnet build -c Release -p:Platform=AnyCPU
-# Or build all platforms
 dotnet build -c Release
+dotnet test
+dotnet pack -c Release -o artifacts/pkg
 ```
 
-### Testing Connection Protocols
-Must instantiate protocol-specific client with corresponding configuration:
+### Configuration Flags
+- `AllowUnsafeBlocks=true`: Enables unsafe code
+- `GenerateDocumentationFile=true`: XML docs required for all public APIs
+- `NoWarn`: Suppresses CS1591 (missing XML docs) and CS0067 (unused events)
+- `LangVersion=latestmajor`: Uses latest major C# version
+- Debug builds append `.Debug` suffix to package IDs
+- `EnablePreviewFeatures=true` in test projects only
+
+### Package Publishing
+- Package IDs: `ThunderPropagator.Application`, `ThunderPropagator.Infrastructure`
+- All packages include `ThunderPropagator.png` and `README.md`
+- Auto-generated on build when `IsPackable=true` and `GeneratePackageOnBuild=true`
+- Output to `artifacts/pkg/` directory
+
+## Testing Strategy
+
+### Test Organization
+- **Unit Tests**: `Tests/ThunderPropagator.UnitTests/` - xUnit with NSubstitute for mocking
+- **Arch Tests**: `Tests/ThunderPropagator.ArchTests/` - NetArchTest.Rules for architecture validation (currently minimal)
+- **Test Mocks**: `ChannelMock.cs`, `ServiceProviderMock.cs` for test infrastructure
+
+### Running Tests
+```powershell
+dotnet test -c Release
+# For specific test
+dotnet test --filter "FullyQualifiedName~ConnectionSubscriptionPushingMessageTest"
+```
+
+## CI/CD Workflows
+
+### Release Process
+- **develop** branch → `develop-beta-ci.yml` → increments beta version (e.g., `1.0.1-beta.5`)
+- **release/** branch → `develop-release-ci.yml` → strips beta suffix, creates GitHub release, syncs back to develop
+- GitHub Packages feed: `https://nuget.pkg.github.com/KiarashMinoo/index.json`
+
+### Version Management
+Scripts in `.github/scripts/` handle version bumps. Never manually edit version in `Directory.Build.props` outside of release workflows.
+
+## Code Conventions
+
+### Naming & Style
+- Use `CallerArgumentExpression` for guard clauses: `Guard.Against.Null(param)`
+- Internal fields: `_camelCase` with underscore prefix
+- Platform names: `MacOs` not `MacOS`, `onAcPower` not `onACPower`
+- Activity naming convention: `{ClassName}_{MethodName}` for telemetry
+- Sealed classes in DEBUG builds become non-sealed for testability
+
+### FeederMessage Pattern
+`FeederMessage` is the core message abstraction from BuildingBlocks - a dictionary-based class implementing `IDictionary<string, object?>`:
+- Properties stored in internal `ConcurrentDictionary`
+- Use `GetValueOrDefault<T>()` and `SetValue()` for type-safe access
+- Supports correlation ID tracking via `ICorrelationIdSupport`
+
+### DisposableObject Base Class
+From BuildingBlocks - consistent disposal pattern for all resources:
+- Abstract base class with `IDisposable` and `IAsyncDisposable`
+- Override `DisposeManagedResources()` or `DisposeUnmanagedResources()`
+- Thread-safe disposal tracking with `IsDisposed` flag
+
+### DI Registration Pattern
+Infrastructure components use extension methods on `IServiceCollection`:
 ```csharp
-var config = new ThunderPropagatorWebSocketConnectionConfiguration { Uri = "wss://..." };
-var client = new ThunderPropagatorWebSocketClient(config, loggerProvider);
-await client.ConnectAsync();
-var channel = await client.CreateChannelAsync("channelName");
+services.AddThunderPropagator(configuration.GetSection("ThunderPropagator"));
+app.UseThunderPropagator();
+```
+See [ThunderPropagatorExtensions.cs](src/ThunderPropagator.Infrastructure/Extensions/ThunderPropagatorExtensions.cs)
+
+### Specialized Collections
+From BuildingBlocks package:
+- **BindingDictionary<TKey, TValue>**: Dictionary with data binding support
+- **GenericOrderedDictionary<TKey, TValue>**: Ordered dictionary implementation
+
+## Documentation
+
+- Main docs: `docs/README.md` - comprehensive catalog
+- Component-level: `docs/Application/README.md` and `docs/Infrastructure/README.md`
+- Feature docs: See `docs/Application/Channels/README.md` for detailed channel documentation
+
+## Common Tasks
+
+### Adding New Channel
+1. Create configuration class inheriting `AbstractChannelConfiguration`
+2. Define metadata class implementing `IChannelMetadata`
+3. Create channel class inheriting `AbstractChannel<TMetadata, TConfiguration>`
+4. Register in DI via `services.TryAddSingleton<YourChannel>()`
+5. Add to `ChannelManager` initialization
+6. Document in `docs/`
+
+### Adding New Protocol
+1. Create connection info class in `Protocols/{ProtocolName}/`
+2. Create connection handler inheriting `AbstractConnectionHandler<TGateway, TConnectionInfo, TPushMessageConfiguration>`
+3. Create connection container inheriting `AbstractConnectionContainer<...>`
+4. Implement `CreateConnectionHandler()` factory method in container
+5. Register container as singleton with `AddHealthCheckSupport<TContainer>()`
+6. Add protocol configuration to `ThunderPropagatorExtensions.AddThunderPropagator()`
+
+### Adding Pipeline
+1. Create pipeline class inheriting `AbstractReceivePipeline` or `AbstractPushPipeline`
+2. Override `InvokeAsync(context, next)` method
+3. Call `await next(context)` to continue chain
+4. Register in DI and configure in pipeline builder
+5. Add tests in `Tests/ThunderPropagator.UnitTests/Pipelines/`
+
+### Creating Custom FeederMessage
+Inherit from `FeederMessage` (from BuildingBlocks) and add strongly-typed properties:
+```csharp
+public class MyMessage : FeederMessage
+{
+    public Guid Id
+    {
+        get => GetValueOrDefault(Guid.NewGuid());
+        set => SetValue(value);
+    }
+    
+    public string? Name
+    {
+        get => GetValueOrNull<string>();
+        set => SetValue(value);
+    }
+}
 ```
 
-### Message Flow
-1. Connection receives raw message → `OnMessageReceived`
-2. First non-PROBE message is `ThunderPropagatorConnectionResponse` (sets `ConnectionInfo`)
-3. Subsequent messages routed to channels by name via regex parsing:
-   - JSON format: `{ "route": { "channel": "..." } }` → `HandleReceivedResponse`
-   - CSV format: `channelName,data,...` → `HandleReceivedMessageAsync`
+### Creating Feeder
+Inherit from `AbstractFeeder` and implement data fetching:
+```csharp
+public class MyFeeder : IterativeFeeder<MyChannel, MyMessage, MyFeederConfiguration>
+{
+    protected override async Task<IEnumerable<MyMessage>> FetchAsync()
+    {
+        // Fetch data from source
+        return await _dataSource.GetLatestAsync();
+    }
+}
+```
 
-## Project Conventions
-
-### Logging
-Custom lightweight logging abstraction in `Infrastructure/Loggers/`. **Do not use Microsoft.Extensions.Logging**. Use `ILoggerProvider.CreateLogger()` and `ILogger.Log()`.
-
-### Enums
-All enums in `Models/Enums/` with `ThunderPropagator` prefix. Key states:
-- `ThunderPropagatorConnectionState`: Ready, Connecting, Open, Closed, HasError
-- `ThunderPropagatorChannelState`: Ready, Opening, Open, Closing, Closed
-- `ThunderPropagatorProtocolType`: WebSocket, Quic, InfiniteDataStream
-
-### Event Handlers
-Typed delegates for all events (not generic `EventHandler<T>`):
-- `ThunderPropagatorConnectionStateChangedEventHandler`
-- `ThunderPropagatorChannelStatusChangedEventHandler`
-- `ThunderPropagatorMessageReceivedEventHandler` (async Task-based)
-
-### Message Parsing
-Use compiled regex for performance:
-- `[GeneratedRegex(..., RegexOptions.Compiled)]` partial static methods
-- See [ThunderPropagatorClient.cs](ThunderPropagatorClient.cs) line 27, [AbstractThunderPropagatorChannel.cs](Infrastructure/Channels/AbstractThunderPropagatorChannel.cs) line 47
-
-## Important Implementation Details
-
-### Connection Lifecycle
-Connections auto-reconnect with 24-hour timeout on receive loop (see [AbstractThunderPropagatorConnection.cs](Infrastructure/Connections/AbstractThunderPropagatorConnection.cs) lines 96-102). PROBE messages are filtered out in `OnMessageReceived`.
-
-### Channel Encryption
-Channels support two encryption layers:
-1. **Auth encryption**: Username/password encrypted before transmission
-2. **Message decryption**: Incoming messages decrypted based on `ChannelMetadata.MessageEncryption`
-
-Built dynamically via `BuildAuthEncryptor()` and `BuildMessageDecryptor()` when metadata received.
-
-### Request/Response Tracking
-Channels maintain `BindingDictionary` of pending requests keyed by request ID. Use `ThunderPropagatorRequestBase` for all requests with `ThunderPropagatorRequestRoute` containing channel/endpoint info.
-
-## Anti-Patterns
-- ❌ Don't use `sealed` without `#if !DEBUG` conditional
-- ❌ Don't bypass `Get<T>()`/`Set()` in configuration classes
-- ❌ Don't reference Microsoft.Extensions.Logging types
-- ❌ Don't create platform-specific conditional compilation beyond existing patterns
-- ❌ Don't manually manage JSON serialization—use `ToNJson()`/`FromNJson<T>()` extensions
+### Publishing Packages
+Packages auto-publish via GitHub Actions. Manual publish:
+```powershell
+dotnet pack -c Release -o artifacts/pkg
+dotnet nuget push artifacts/pkg/*.nupkg --source github --api-key $GITHUB_TOKEN
+```
