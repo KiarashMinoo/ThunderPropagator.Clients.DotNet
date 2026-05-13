@@ -6,6 +6,7 @@
     <RootNamespace>ThunderPropagator.ArchTests</RootNamespace>
     <LangVersion>latestmajor</LangVersion>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    <GenerateRequiresPreviewFeaturesAttribute>false</GenerateRequiresPreviewFeaturesAttribute>
     <NoWarn>$(NoWarn);CA2252</NoWarn>
     <TargetFrameworks />
   </PropertyGroup>
