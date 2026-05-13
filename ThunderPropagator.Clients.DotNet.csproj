@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup Label="ThunderPropagatorPackages">
-        <BuildingBlocksVersion>1.0.1-beta.14</BuildingBlocksVersion>
+        <BuildingBlocksVersion>1.0.1-beta.26</BuildingBlocksVersion>
         <BuildingBlocksPackageId>ThunderPropagator.BuildingBlocks$(PackageIdConfigurationSuffix)$(PackageIdPlatformSuffix)</BuildingBlocksPackageId>
     </PropertyGroup>
 
@@ -19,6 +19,6 @@
 
     <ItemGroup>
       <None Remove="Tests\**" />
-    </ItemGroup>    
+    </ItemGroup>
 
 </Project>
