@@ -1,13 +1,13 @@
 # ============================================================
-# OS & Editor Artifacts
+# Operating System Files
 # ============================================================
 .DS_Store
-*.swp
-*.*~
-*.pyc
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # ============================================================
-# IDE & Editor Directories
+# Editors and IDEs
 # ============================================================
 
 # Visual Studio
@@ -20,47 +20,83 @@
 # Visual Studio Code
 .vscode/
 
-# JetBrains Rider
+# JetBrains Rider / IntelliJ Platform
 .idea/
+*.sln.iml
 
 # JetBrains Fleet
 .fleet/
 
-# Code Rush
+# CodeRush
 .cr/
 
-# ============================================================
-# Tool & Agent Config
-# ============================================================
-.claude
-.shared-props/
-.obsidian/
-graphify-out/
-.graphify*
+# Vim / swap / backup files
+*.swp
+*.swo
+*~
+*.*~
 
 # ============================================================
-# Build Output
+# .NET Build Output
 # ============================================================
+[Bb]in/
+[Oo]bj/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
 [Bb]uild/
-[Bb]in/
-[Oo]bj/
 [Oo]ut/
 bld/
 x64/
 x86/
-artifacts/
-nupkg/
-project.lock.json
-msbuild.log
-msbuild.err
-msbuild.wrn
 
 # ============================================================
-# Runtime Data & Volumes
+# .NET and NuGet Artifacts
+# ============================================================
+artifacts/
+nupkg/
+*.nupkg
+*.snupkg
+*.symbols.nupkg
+project.assets.json
+project.lock.json
+*.nuget.props
+*.nuget.targets
+
+# ============================================================
+# Logs, Test Results, and Diagnostics
+# ============================================================
+*.log
+*.binlog
+msbuild.err
+msbuild.log
+msbuild.wrn
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+coverage-*/
+
+# ============================================================
+# Repo-Generated Build Inputs
+# ============================================================
+
+# Downloaded by Directory.Build.props during restore/build.
+.shared-props/
+
+# ============================================================
+# Local Tooling and Agent State
+# ============================================================
+.claude/
+.codex/
+.obsidian/
+graphify-out/
+.graphify*
+
+# ============================================================
+# Local Runtime Data
 # ============================================================
 [Vv]olumes/
 data/
