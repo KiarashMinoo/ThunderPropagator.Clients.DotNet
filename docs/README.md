@@ -1,164 +1,49 @@
-# ThunderPropagator .NET Client Library Documentation
+# ThunderPropagator.Clients.DotNet Documentation
 
-This is the comprehensive documentation for **ThunderPropagator.Clients.DotNet**, a real-time data streaming client library for .NET 8/9/10 supporting WebSocket, QUIC, and InfiniteDataStream protocols.
+Reference .NET client for ThunderPropagator with WebSocket, QUIC, and InfiniteDataStream transports, channel subscriptions, and encryption.
 
 ## Contents
 
-- [Overview](#overview)
-- [Architecture Areas](#architecture-areas)
-- [Getting Started](#getting-started)
-- [NuGet Packages](#nuget-packages)
-- [Coverage Audit](#coverage-audit)
+- [Documentation areas](#documentation-areas)
+- [Package dependencies](#package-dependencies)
+- [Coverage audit](#coverage-audit)
 
-## Overview
+## Documentation areas
 
-ThunderPropagator.Clients.DotNet is a multi-protocol, multi-platform client library enabling real-time communication with ThunderPropagator servers. The library implements a three-layer architecture (Client → Channel → Connection) with support for:
+- [Channels](./Channels/README.md) `Types:3` `Files:3` `Diagrams:✓`
+- [Clients](./Clients/README.md) `Types:3` `Files:3` `Diagrams:✓`
+- [Connections](./Connections/README.md) `Types:0` `Files:0` `Diagrams:✓`
+- [Infrastructure](./Infrastructure/README.md) `Types:0` `Files:0` `Diagrams:✓`
+- [instructions](./instructions/README.md) `Types:0` `Files:1` `Diagrams:✓`
+- [Models](./Models/README.md) `Types:1` `Files:1` `Diagrams:✓`
 
-- **Protocols**: WebSocket, QUIC, InfiniteDataStream
-- **Frameworks**: .NET 8.0, 9.0, 10.0
-- **Platforms**: AnyCPU, x86, x64, ARM64
-- **Features**: Connection management, channel subscriptions, encryption, request/response tracking
+## Package dependencies
 
-The library is distributed as NuGet packages via GitHub Packages (`https://nuget.pkg.github.com/KiarashMinoo/index.json`).
+*No external package dependencies were detected from supported manifests.*
 
-**Current Version**: `1.0.1-beta.14`  
-**ThunderPropagator Framework Version**: `1.0.1-beta.15`  
-**BuildingBlocks Version**: `1.0.1-beta.14`
+## Coverage audit
 
-## Architecture Areas
+| Documentation area | Status | Files | Types | Retry passes |
+|---|---|---:|---:|---:|
+| [`Channels`](./Channels/README.md) | ✅ Complete | 3 | 3 | 1 |
+| [`Clients`](./Clients/README.md) | ✅ Complete | 3 | 3 | 1 |
+| [`Connections`](./Connections/README.md) | ✅ Complete | 0 | 0 | 1 |
+| [`Connections/InfiniteDataStream`](./Connections/InfiniteDataStream/README.md) | ✅ Complete | 2 | 2 | 1 |
+| [`Connections/Quic`](./Connections/Quic/README.md) | ✅ Complete | 2 | 2 | 1 |
+| [`Connections/WebSocket`](./Connections/WebSocket/README.md) | ✅ Complete | 2 | 2 | 1 |
+| [`Infrastructure`](./Infrastructure/README.md) | ✅ Complete | 0 | 0 | 1 |
+| [`Infrastructure/Channels`](./Infrastructure/Channels/README.md) | ✅ Complete | 2 | 5 | 1 |
+| [`Infrastructure/Connections`](./Infrastructure/Connections/README.md) | ✅ Complete | 3 | 3 | 1 |
+| [`Infrastructure/Loggers`](./Infrastructure/Loggers/README.md) | ✅ Complete | 4 | 4 | 1 |
+| [`Infrastructure/Requests`](./Infrastructure/Requests/README.md) | ✅ Complete | 2 | 1 | 1 |
+| [`Infrastructure/Responses`](./Infrastructure/Responses/README.md) | ✅ Complete | 1 | 1 | 1 |
+| [`instructions`](./instructions/README.md) | ✅ Complete | 1 | 0 | 1 |
+| [`Models`](./Models/README.md) | ✅ Complete | 1 | 1 | 1 |
+| [`Models/Connections`](./Models/Connections/README.md) | ✅ Complete | 2 | 2 | 1 |
+| [`Models/Enums`](./Models/Enums/README.md) | ✅ Complete | 10 | 10 | 1 |
+| [`Models/Metadata`](./Models/Metadata/README.md) | ✅ Complete | 7 | 7 | 1 |
+| [`Models/ReceivedMessage`](./Models/ReceivedMessage/README.md) | ✅ Complete | 2 | 2 | 1 |
+| [`Models/Requests`](./Models/Requests/README.md) | ✅ Complete | 5 | 1 | 1 |
+| [`Models/Subscriptions`](./Models/Subscriptions/README.md) | ✅ Complete | 5 | 4 | 1 |
 
-The documentation is organized into the following major areas:
-
-### [Clients](./Clients/README.md)
-Protocol-specific client facades providing entry points for WebSocket, QUIC, and InfiniteDataStream connections. Each client delegates to the protocol-agnostic `ThunderPropagatorClient` base.
-
-### [Channels](./Channels/README.md)
-Protocol-specific channel implementations handling logical communication channels, subscriptions, encryption, and metadata management.
-
-### [Connections](./Connections/README.md)
-Transport layer implementations for each protocol (WebSocket, QUIC, InfiniteDataStream), managing connection state, message receipt, and protocol-specific behavior.
-
-### [Infrastructure](./Infrastructure/README.md)
-Core abstractions and base implementations including:
-- Abstract connection and channel base classes
-- Configuration patterns
-- Logging abstraction
-- Request/response infrastructure
-
-### [Models](./Models/README.md)
-Data models including:
-- Enumerations (connection states, channel states, protocol types)
-- Metadata structures (channel, authentication, encryption)
-- Request/response models
-- Subscription models
-- Received message structures
-
-## Getting Started
-
-### Installation
-
-Configure NuGet to use the GitHub Packages feed:
-
-```bash
-dotnet nuget add source https://nuget.pkg.github.com/KiarashMinoo/index.json \
-  -n github \
-  -u KiarashMinoo \
-  -p <your-github-token> \
-  --store-password-in-clear-text
-```
-
-Install the appropriate package:
-
-```bash
-# AnyCPU (Debug or Release)
-dotnet add package ThunderPropagator.Clients.DotNet --version 1.0.1-beta.14
-
-# Platform-specific (better performance)
-dotnet add package ThunderPropagator.Clients.DotNet.x64 --version 1.0.1-beta.14
-```
-
-### Basic Usage
-
-```csharp
-using ThunderPropagator.Clients.DotNet;
-using ThunderPropagator.Clients.DotNet.Clients;
-using ThunderPropagator.Clients.DotNet.Connections.WebSocket;
-
-// Create configuration
-var config = new ThunderPropagatorWebSocketConnectionConfiguration 
-{ 
-    Uri = "wss://your-server.com/thunderpropagator" 
-};
-
-// Create client with logger provider
-var client = new ThunderPropagatorWebSocketClient(config, loggerProvider);
-
-// Connect
-await client.ConnectAsync();
-
-// Create channel
-var channel = await client.CreateChannelAsync("myChannel");
-
-// Subscribe to messages
-channel.ReceivedMessage += (sender, message, args) => 
-{
-    Console.WriteLine($"Received: {message.Data}");
-};
-
-// Open channel
-await channel.OpenAsync("username", "password");
-
-// Subscribe to data stream
-await channel.SubscribeAsync(new ThunderPropagatorSubscriptionRequest 
-{ 
-    // subscription details 
-});
-```
-
-## NuGet Packages
-
-ThunderPropagator packages are hosted on GitHub Packages:
-
-| Package | Version | Description |
-|---------|---------|-------------|
-| ThunderPropagator.Clients.DotNet | 1.0.1-beta.14 | AnyCPU release build |
-| ThunderPropagator.Clients.DotNet.Debug | 1.0.1-beta.14 | AnyCPU debug build |
-| ThunderPropagator.Clients.DotNet.x64 | 1.0.1-beta.14 | x64 optimized release build |
-| ThunderPropagator.Clients.DotNet.x86 | 1.0.1-beta.14 | x86 optimized release build |
-| ThunderPropagator.Clients.DotNet.ARM64 | 1.0.1-beta.14 | ARM64 optimized release build |
-| ThunderPropagator.BuildingBlocks | 1.0.1-beta.14 | Core utilities and abstractions |
-
-**Feed URL**: `https://nuget.pkg.github.com/KiarashMinoo/index.json`
-
-## Coverage Audit
-
-Documentation coverage for ThunderPropagator.Clients.DotNet repository:
-
-| Folder | Status | Sections | Diagrams | Notes |
-|--------|--------|----------|----------|-------|
-| Root | ✅ | Complete | ✓ | Core client facade |
-| Clients/ | ✅ | Complete | ✓ | 3 files documented |
-| Channels/ | ✅ | Complete | ✓ | 3 files documented |
-| Connections/ | ✅ | Complete | ✓ | All protocols covered |
-| Connections/WebSocket/ | ✅ | Complete | ✓ | 2 files documented |
-| Connections/Quic/ | ✅ | Complete | ✓ | 2 files documented |
-| Connections/InfiniteDataStream/ | ✅ | Complete | ✓ | 2 files documented |
-| Infrastructure/ | ✅ | Complete | ✓ | Core abstractions |
-| Infrastructure/Channels/ | ✅ | Complete | ✓ | 2 files documented |
-| Infrastructure/Connections/ | ✅ | Complete | ✓ | 3 files documented |
-| Infrastructure/Loggers/ | ✅ | Complete | ✗ | 4 files documented |
-| Infrastructure/Requests/ | ✅ | Complete | ✗ | 2 files documented |
-| Infrastructure/Responses/ | ✅ | Complete | ✗ | 1 file documented |
-| Models/ | ✅ | Complete | ✓ | 1 file + 6 subfolders |
-| Models/Enums/ | ✅ | Complete | ✗ | 9 enums documented |
-| Models/Metadata/ | ✅ | Complete | ✓ | 7 files documented |
-| Models/Connections/ | ✅ | Complete | ✗ | 2 files documented |
-| Models/ReceivedMessage/ | ✅ | Complete | ✗ | 2 files documented |
-| Models/Requests/ | ✅ | Complete | ✗ | 5 files documented |
-| Models/Subscriptions/ | ✅ | Complete | ✓ | 5 files documented |
-
-**Last generated:** December 29, 2025
-
----
-
-[↑ Back to top](#contents)
+**Last generated:** July 27, 2026

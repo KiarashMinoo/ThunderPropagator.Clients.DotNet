@@ -1,70 +1,71 @@
-# Infrastructure / Requests
+# Requests
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
+- [Types and Members](#types-and-members)
+- [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Base request classes and routing structures for channel operations including metadata requests, subscriptions, pings, and custom requests.
+The **Requests** area groups 1 documented type, including `ThunderPropagatorRequestBase`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ThunderPropagatorRequestBase.cs | ThunderPropagatorRequestBase | ~30 | Abstract base for all requests |
-| ThunderPropagatorRequestRoute.cs | ThunderPropagatorRequestRoute | ~20 | Request routing information |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ThunderPropagatorRequestBase.cs` | `ThunderPropagatorRequestBase` | 47 | Defines ThunderPropagatorRequestBase and its related behavior. |
+| `ThunderPropagatorRequestRoute.cs` | `ThunderPropagatorRequestRoute` | 18 | Defines ThunderPropagatorRequestRoute and its related behavior. |
 
-## Types & Members
+## Types and Members
+
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`ThunderPropagatorRequestBase`](#thunderpropagatorrequestbase) | class | Represents the ThunderPropagatorRequestBase class. | `DisposableObject` | `RequestId`, `Route`, `Token`, `Username`, `Password`, `Awaitable` |
 
 ### ThunderPropagatorRequestBase
 
-**Kind**: Abstract class (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Requests`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Requests`
+- **Inherits/implements:** `DisposableObject`
+- **Attributes:** None detected
+- **Key members:** `RequestId`, `Route`, `Token`, `Username`, `Password`, `Awaitable`, `SetAwaitable(…)`, `SetRequestTimeout(…)`
+- **Summary:** Represents the ThunderPropagatorRequestBase class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Base class for all ThunderPropagator requests.
-
-**Key Properties**:
-
-- `RequestId: string` — Unique request identifier
-- `Route: ThunderPropagatorRequestRoute` — Routing information (channel, endpoint)
-- `CorrelationId: string?` — Optional correlation tracking
-
-**Key Methods**:
+**Usage recipe**
 
 ```csharp
-public ManualResetEvent SetAwaitable()
+// Resolve ThunderPropagatorRequestBase from the configured service container or construct it with its declared dependencies.
 ```
 
-Makes request awaitable by returning a `ManualResetEvent` for synchronization.
-
 [↑ Back to top](#contents)
 
----
+## Diagrams
 
-### ThunderPropagatorRequestRoute
+### Component overview
 
-**Kind**: Class (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Requests`
+```mermaid
+graph TD
+  Current["Requests"]
+  Current --> T0["ThunderPropagatorRequestBase"]
+```
 
-Contains routing information for requests.
+The diagram shows the direct components documented by the **Requests** area.
 
-**Key Properties**:
+## Examples
 
-- `Channel: string` — Target channel name
-- `Endpoint: string` — Target endpoint within channel
-- `Action: string?` — Optional action specifier
-
-[↑ Back to top](#contents)
-
----
+Start with `ThunderPropagatorRequestBase` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Models/Requests](../../Models/Requests/README.md) — Concrete request implementations
-- [Infrastructure](../README.md) — Parent infrastructure overview
+- [Parent area](../README.md)
+- [Channels](../Channels/README.md)
+- [Connections](../Connections/README.md)
+- [Loggers](../Loggers/README.md)
+- [Responses](../Responses/README.md)
 
 [↑ Back to top](#contents)

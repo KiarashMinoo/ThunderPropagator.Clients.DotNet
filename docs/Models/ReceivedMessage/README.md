@@ -1,57 +1,92 @@
-# Models / ReceivedMessage
+# ReceivedMessage
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Key Types](#key-types)
+- [Types and Members](#types-and-members)
+- [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Structures for messages received from channels including headers and data payloads.
+The **ReceivedMessage** area groups 2 documented types, including `ChannelReceivedMessage`, `ChannelReceivedMessageHeader`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ChannelReceivedMessage.cs | ChannelReceivedMessage | ~30 | Complete received message |
-| ChannelReceivedMessageHeader.cs | ChannelReceivedMessageHeader | ~20 | Message header information |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ChannelReceivedMessage.cs` | `ChannelReceivedMessage` | 20 | Defines ChannelReceivedMessage and its related behavior. |
+| `ChannelReceivedMessageHeader.cs` | `ChannelReceivedMessageHeader` | 28 | Defines ChannelReceivedMessageHeader and its related behavior. |
 
-## Key Types
+## Types and Members
+
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`ChannelReceivedMessage`](#channelreceivedmessage) | class | Represents the ChannelReceivedMessage class. | — | `Header`, `Keys`, `Values` |
+| [`ChannelReceivedMessageHeader`](#channelreceivedmessageheader) | class | Represents the ChannelReceivedMessageHeader class. | — | `ChannelName`, `RequestId`, `FromSnapshot`, `RecordStatus`, `GetHashCode(…)` |
 
 ### ChannelReceivedMessage
 
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.ReceivedMessage`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.ReceivedMessage`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `Header`, `Keys`, `Values`
+- **Summary:** Represents the ChannelReceivedMessage class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Complete message received from a channel.
+**Usage recipe**
 
-**Key Properties**:
-
-- `Header: ChannelReceivedMessageHeader` — Message metadata
-- `Data: string` — Message payload (JSON/CSV)
-- `Timestamp: DateTime` — Receive timestamp
-
-### ChannelReceivedMessageHeader
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.ReceivedMessage`
-
-Message header with routing and metadata.
-
-**Key Properties**:
-
-- `Channel: string` — Source channel
-- `MessageType: string` — Type of message
-- `SequenceNumber: long?` — Optional sequence number
-- `CorrelationId: string?` — Request correlation
+```csharp
+// Resolve ChannelReceivedMessage from the configured service container or construct it with its declared dependencies.
+```
 
 [↑ Back to top](#contents)
 
----
+### ChannelReceivedMessageHeader
+
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.ReceivedMessage`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `ChannelName`, `RequestId`, `FromSnapshot`, `RecordStatus`, `GetHashCode(…)`
+- **Summary:** Represents the ChannelReceivedMessageHeader class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ChannelReceivedMessageHeader from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Diagrams
+
+### Component overview
+
+```mermaid
+graph TD
+  Current["ReceivedMessage"]
+  Current --> T0["ChannelReceivedMessage"]
+  Current --> T1["ChannelReceivedMessageHeader"]
+```
+
+The diagram shows the direct components documented by the **ReceivedMessage** area.
+
+## Examples
+
+Start with `ChannelReceivedMessage` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Models](../README.md) — Parent models overview
-- [Infrastructure/Channels](../../Infrastructure/Channels/README.md) — Channels producing received messages
+- [Parent area](../README.md)
+- [Connections](../Connections/README.md)
+- [Enums](../Enums/README.md)
+- [Metadata](../Metadata/README.md)
+- [Requests](../Requests/README.md)
+- [Subscriptions](../Subscriptions/README.md)
 
 [↑ Back to top](#contents)
