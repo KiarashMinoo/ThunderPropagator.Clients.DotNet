@@ -1,116 +1,161 @@
-# Infrastructure / Channels
+# Channels
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
+- [Types and Members](#types-and-members)
+- [Serialization and Contracts](#serialization-and-contracts)
+- [Validation and Constraints](#validation-and-constraints)
 - [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Contains the abstract channel base class and interface that define channel behavior for all protocol implementations. Channels manage logical communication, subscriptions, authentication, encryption, and message routing.
+The **Channels** area groups 5 documented types, including `void`, `void`, `void`, `AbstractThunderPropagatorChannel`, `IThunderPropagatorChannel`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| AbstractThunderPropagatorChannel.cs | AbstractThunderPropagatorChannel | ~375 | Abstract base for all channel implementations |
-| IThunderPropagatorChannel.cs | IThunderPropagatorChannel | ~40 | Public channel interface |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `AbstractThunderPropagatorChannel.cs` | `void`, `void`, `void`, `AbstractThunderPropagatorChannel` | 375 | Defines void, void, void and its related behavior. |
+| `IThunderPropagatorChannel.cs` | `IThunderPropagatorChannel` | 41 | Defines IThunderPropagatorChannel and its related behavior. |
 
-## Types & Members
+## Types and Members
 
-### AbstractThunderPropagatorChannel
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`void`](#void) | delegate | Represents the void delegate. | — | `ThunderPropagatorMetadataUpdatedEventHandler(…)`, `ThunderPropagatorChannelReceivedMessageEventHandler(…)`, `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection` |
+| [`void`](#void) | delegate | Represents the void delegate. | — | `ThunderPropagatorChannelReceivedMessageEventHandler(…)`, `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState` |
+| [`void`](#void) | delegate | Represents the void delegate. | — | `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState`, `OnPropertyChanged(…)` |
+| [`AbstractThunderPropagatorChannel`](#abstractthunderpropagatorchannel) | class | Represents the AbstractThunderPropagatorChannel class. | `INotifyPropertyChanged,` | `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState`, `OnPropertyChanged(…)` |
+| [`IThunderPropagatorChannel`](#ithunderpropagatorchannel) | interface | Represents the IThunderPropagatorChannel interface. | — | `HandleReceivedResponse(…)`, `HandleReceivedMessageAsync(…)`, `SetChannelMetadata(…)`, `RequestChannelMetadataAsync(…)`, `RequestSubscriptionAsync(…)`, `RequestUnsubscribeAsync(…)` |
 
-**Kind**: Abstract class (internal)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`  
-**Implements**: `IThunderPropagatorChannel`, `INotifyPropertyChanged`
+### void
 
-Core channel implementation providing subscription management, encryption, authentication, and message routing.
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `ThunderPropagatorMetadataUpdatedEventHandler(…)`, `ThunderPropagatorChannelReceivedMessageEventHandler(…)`, `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState`, `OnPropertyChanged(…)`
+- **Summary:** Represents the void delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-**Key Properties**:
+**Usage recipe**
 
-- `Name: string` — Channel identifier
-- `ChannelMetadata: ThunderPropagatorChannelMetadata?` — Channel configuration
-- `ChannelStatus: ThunderPropagatorChannelState` — Current state
-- `PingPongState: ThunderPropagatorPingPongState` — Health check status
-- `ThunderPropagatorConnection: IThunderPropagatorConnection` — Underlying connection
-
-**Key Methods**:
-
-- `OpenAsync(username, password)` — Authenticate and open channel
-- `SubscribeAsync(request)` — Subscribe to data stream
-- `RequestChannelMetadataAsync()` — Fetch channel metadata
-- `PingAsync()` — Health check
-- `HandleReceivedResponse(response)` — Process server responses
-- `HandleReceivedMessageAsync(message)` — Process incoming messages
-
-**Encryption Support**:
-
-- `BuildAuthEncryptor()` — Creates RSA encryptor for credentials
-- `BuildMessageDecryptor()` — Creates RSA decryptor for messages
-
-**Thread-safety**: Uses `BindingDictionary` for concurrent request/subscription tracking
-
-[↑ Back to top](#contents)
-
----
-
-### IThunderPropagatorChannel
-
-**Kind**: Interface (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`
-
-Public contract for channel operations.
-
-**Key Members**:
-
-- `ChannelMetadata: ThunderPropagatorChannelMetadata?` — Metadata property
-- `ChannelStatus: ThunderPropagatorChannelState` — State property
-- `SetToken(token)` — Set OAuth2 token
-- `SetAuthentication(username, password, cipheringMetadata)` — Set basic auth
-- `SetMessageCipheringMetadata(metadata)` — Configure message decryption
-- `RequestPingAsync()` — Send ping
-- `RequestChannelMetadataAsync()` — Request metadata
-- `CreateSubscription(...)` — Create subscription objects
-
-**Events**:
-
-- `ChannelStatusChanged` — State transition notifications
-- `MetadataUpdated` — Metadata received
-- `ReceivedMessage` — New message arrived
-
-[↑ Back to top](#contents)
-
----
-
-## Diagrams
-
-### Channel State Machine
-
-```mermaid
-stateDiagram-v2
-    [*] --> Ready
-    Ready --> RequestingMetadata: RequestChannelMetadataAsync()
-    RequestingMetadata --> HasMetadata: Success
-    RequestingMetadata --> HasError: Failure
-    HasMetadata --> Opening: OpenAsync()
-    Opening --> Open: Auth success
-    Opening --> HasError: Auth failed
-    Open --> Closing: CloseAsync()
-    Closing --> Closed
-    HasError --> [*]
-    Closed --> [*]
+```csharp
+// Resolve void from the configured service container or construct it with its declared dependencies.
 ```
 
 [↑ Back to top](#contents)
 
----
+### void
+
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `ThunderPropagatorChannelReceivedMessageEventHandler(…)`, `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState`, `OnPropertyChanged(…)`
+- **Summary:** Represents the void delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve void from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### void
+
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState`, `OnPropertyChanged(…)`
+- **Summary:** Represents the void delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve void from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### AbstractThunderPropagatorChannel
+
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`
+- **Inherits/implements:** `INotifyPropertyChanged,`
+- **Attributes:** None detected
+- **Key members:** `Name`, `LoggerProvider`, `Logger`, `ThunderPropagatorConnection`, `PingPongState`, `OnPropertyChanged(…)`
+- **Summary:** Represents the AbstractThunderPropagatorChannel class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve AbstractThunderPropagatorChannel from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### IThunderPropagatorChannel
+
+- **Kind:** interface
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Channels`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `HandleReceivedResponse(…)`, `HandleReceivedMessageAsync(…)`, `SetChannelMetadata(…)`, `RequestChannelMetadataAsync(…)`, `RequestSubscriptionAsync(…)`, `RequestUnsubscribeAsync(…)`
+- **Summary:** Represents the IThunderPropagatorChannel interface.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve IThunderPropagatorChannel from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Serialization and Contracts
+
+Serialization behavior is part of the public wire or persistence contract in this area. Preserve field names, ordering rules, content negotiation, and backward-compatibility expectations when changing these types.
+
+## Validation and Constraints
+
+Inputs are validated at component boundaries. Callers should provide non-null required values and handle domain or argument exceptions without retrying invalid requests unchanged.
+
+## Diagrams
+
+### Component overview
+
+```mermaid
+graph TD
+  Current["Channels"]
+  Current --> T0["void"]
+  Current --> T1["void"]
+  Current --> T2["void"]
+  Current --> T3["AbstractThunderPropagatorChannel"]
+  Current --> T4["IThunderPropagatorChannel"]
+```
+
+The diagram shows the direct components documented by the **Channels** area.
+
+## Examples
+
+Start with `void` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Channels](../../Channels/README.md) — Protocol-specific channel implementations
-- [Infrastructure](../README.md) — Parent infrastructure overview
+- [Parent area](../README.md)
+- [Connections](../Connections/README.md)
+- [Loggers](../Loggers/README.md)
+- [Requests](../Requests/README.md)
+- [Responses](../Responses/README.md)
 
 [↑ Back to top](#contents)

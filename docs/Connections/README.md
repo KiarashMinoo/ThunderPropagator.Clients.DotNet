@@ -3,127 +3,50 @@
 ## Contents
 
 - [Overview](#overview)
-- [Protocol Implementations](#protocol-implementations)
+- [Files](#files)
 - [Diagrams](#diagrams)
-  - [Connection Architecture](#connection-architecture)
-  - [Connection Lifecycle](#connection-lifecycle)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-The Connections folder contains transport layer implementations for each supported protocol (WebSocket, QUIC, InfiniteDataStream). Each protocol has its own subdirectory with connection and configuration classes.
+The **Connections** area organizes 3 direct sub-areas. Each child is documented separately so responsibilities and APIs remain easy to navigate.
 
-Connections are responsible for:
-- Managing protocol-specific transport layer
-- Connection state management (Ready, Connecting, Open, Closed, HasError)
-- Message receipt and transmission
-- Auto-reconnection with 24-hour receive timeout
-- Filtering PROBE messages
-- Parsing initial connection response
+## Files
 
-All connection implementations extend `AbstractThunderPropagatorConnection<T>` where `T` is the protocol-specific configuration class.
+*None.*
 
-## Protocol Implementations
+### Direct child areas
 
-### [WebSocket](./WebSocket/README.md)
-WebSocket protocol implementation using .NET's `ClientWebSocket`. Supports:
-- Standard WebSocket connections (ws:// and wss://)
-- Configurable buffer sizes
-- Text message framing
-- Automatic reconnection
-
-`Types:2` `Files:2` `Diagrams:✓`
-
-### [Quic](./Quic/README.md)
-QUIC (HTTP/3) protocol implementation for low-latency connections. Supports:
-- QUIC stream-based communication
-- Modern transport protocol
-- Certificate validation
-
-`Types:2` `Files:2` `Diagrams:✓`
-
-### [InfiniteDataStream](./InfiniteDataStream/README.md)
-InfiniteDataStream protocol implementation with HTTP support. Supports:
-- Long-lived HTTP streaming
-- HTTP-based metadata requests
-- Server-sent events style communication
-
-`Types:2` `Files:2` `Diagrams:✓`
+- [InfiniteDataStream](./InfiniteDataStream/README.md) `Types:2` `Files:2`
+- [Quic](./Quic/README.md) `Types:2` `Files:2`
+- [WebSocket](./WebSocket/README.md) `Types:2` `Files:2`
 
 ## Diagrams
 
-### Connection Architecture
+### Component overview
 
 ```mermaid
 graph TD
-    Client[ThunderPropagatorClient] --> WSConn[WebSocketConnection]
-    Client --> QuicConn[QuicConnection]
-    Client --> IDSConn[InfiniteDataStreamConnection]
-    
-    WSConn --> AbstractConn[AbstractThunderPropagatorConnection]
-    QuicConn --> AbstractConn
-    IDSConn --> AbstractConn
-    
-    AbstractConn --> IConn[IThunderPropagatorConnection]
-    
-    WSConn -.uses.-> WSConfig[WebSocketConnectionConfiguration]
-    QuicConn -.uses.-> QuicConfig[QuicConnectionConfiguration]
-    IDSConn -.uses.-> IDSConfig[InfiniteDataStreamConnectionConfiguration]
-    
-    WSConfig --> AbstractConfig[AbstractThunderPropagatorConfiguration]
-    QuicConfig --> AbstractConfig
-    IDSConfig --> AbstractConfig
+  Current["Connections"]
+  Current --> C0["InfiniteDataStream"]
+  Current --> C1["Quic"]
+  Current --> C2["WebSocket"]
 ```
 
-Shows how protocol-specific connections inherit from the abstract base and use their corresponding configurations.
+The diagram shows the direct components documented by the **Connections** area.
 
-[↑ Back to top](#contents)
+## Examples
 
----
-
-### Connection Lifecycle
-
-```mermaid
-sequenceDiagram
-    participant Client as Client
-    participant Conn as Connection
-    participant Transport as Transport Layer
-    
-    Client->>Conn: ConnectAsync()
-    Conn->>Conn: State = Connecting
-    Conn->>Transport: InternalConnectAsync()
-    Transport-->>Conn: Connected
-    Conn->>Conn: Start receive loop (24h timeout)
-    Conn->>Transport: ReceiveAsync()
-    Transport-->>Conn: First message (ConnectionResponse)
-    Conn->>Conn: Parse ConnectionInfo
-    Conn->>Conn: State = Open
-    Conn-->>Client: Connected
-    
-    loop Message Receiving
-        Conn->>Transport: ReceiveAsync()
-        Transport-->>Conn: Message
-        Conn->>Conn: Filter PROBE messages
-        Conn->>Client: MessageReceived event
-    end
-    
-    Client->>Conn: DisconnectAsync()
-    Conn->>Transport: InternalDisconnectAsync()
-    Transport-->>Conn: Closed
-    Conn->>Conn: State = Closed
-    Conn-->>Client: Disconnected
-```
-
-Typical connection lifecycle from establishment through message receiving to disconnection.
-
-[↑ Back to top](#contents)
-
----
+Choose the child area that matches the required capability; parent documentation intentionally does not duplicate child implementation details.
 
 ## See Also
 
-- [Infrastructure/Connections](../Infrastructure/Connections/README.md) — Abstract connection base class and interfaces
-- [Clients](../Clients/README.md) — Client facades that use connections
-- [Channels](../Channels/README.md) — Channels that communicate through connections
+- [Documentation home](../README.md)
+- [Channels](../Channels/README.md)
+- [Clients](../Clients/README.md)
+- [Infrastructure](../Infrastructure/README.md)
+- [Models](../Models/README.md)
+- [instructions](../instructions/README.md)
 
 [↑ Back to top](#contents)

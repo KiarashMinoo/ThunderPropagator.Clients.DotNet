@@ -1,134 +1,263 @@
-# Models / Enums
+# Enums
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Enumeration Types](#enumeration-types)
+- [Types and Members](#types-and-members)
+- [Serialization and Contracts](#serialization-and-contracts)
+- [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Enumeration types defining connection states, channel states, protocol types, authentication types, subscription modes, and other operational states used throughout the library.
-
-All enums follow the naming convention `ThunderPropagator*` prefix.
+The **Enums** area groups 10 documented types, including `ThunderPropagatorChannelAuthenticationType`, `ThunderPropagatorChannelFieldType`, `ThunderPropagatorChannelState`, `ThunderPropagatorChannelStorageType`, `ThunderPropagatorConnectionState`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | Values | Responsibility |
-|------|-------------|--------|----------------|
-| ThunderPropagatorConnectionState.cs | ThunderPropagatorConnectionState | 5 | Connection lifecycle states |
-| ThunderPropagatorChannelState.cs | ThunderPropagatorChannelState | 8 | Channel lifecycle states |
-| ThunderPropagatorProtocolType.cs | ThunderPropagatorProtocolType | 3 | Supported protocol types |
-| ThunderPropagatorChannelAuthenticationType.cs | ThunderPropagatorChannelAuthenticationType | 3 | Authentication methods |
-| ThunderPropagatorChannelFieldType.cs | ThunderPropagatorChannelFieldType | ~5 | Field data types |
-| ThunderPropagatorChannelStorageType.cs | ThunderPropagatorChannelStorageType | ~3 | Storage backend types |
-| ThunderPropagatorPingPongState.cs | ThunderPropagatorPingPongState | 3 | Health check states |
-| ThunderPropagatorRecordStatus.cs | ThunderPropagatorRecordStatus | ~4 | Record status types |
-| ThunderPropagatorSubscriptionMode.cs | ThunderPropagatorSubscriptionMode | 3 | Subscription delivery modes |
-| ThunderPropagatorSubscriptionStatus.cs | ThunderPropagatorSubscriptionStatus | ~4 | Subscription states |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ThunderPropagatorChannelAuthenticationType.cs` | `ThunderPropagatorChannelAuthenticationType` | 9 | Defines ThunderPropagatorChannelAuthenticationType and its related behavior. |
+| `ThunderPropagatorChannelFieldType.cs` | `ThunderPropagatorChannelFieldType` | 16 | Defines ThunderPropagatorChannelFieldType and its related behavior. |
+| `ThunderPropagatorChannelState.cs` | `ThunderPropagatorChannelState` | 10 | Defines ThunderPropagatorChannelState and its related behavior. |
+| `ThunderPropagatorChannelStorageType.cs` | `ThunderPropagatorChannelStorageType` | 9 | Defines ThunderPropagatorChannelStorageType and its related behavior. |
+| `ThunderPropagatorConnectionState.cs` | `ThunderPropagatorConnectionState` | 12 | Defines ThunderPropagatorConnectionState and its related behavior. |
+| `ThunderPropagatorPingPongState.cs` | `ThunderPropagatorPingPongState` | 10 | Defines ThunderPropagatorPingPongState and its related behavior. |
+| `ThunderPropagatorProtocolType.cs` | `ThunderPropagatorProtocolType` | 10 | Defines ThunderPropagatorProtocolType and its related behavior. |
+| `ThunderPropagatorRecordStatus.cs` | `ThunderPropagatorRecordStatus` | 10 | Defines ThunderPropagatorRecordStatus and its related behavior. |
+| `ThunderPropagatorSubscriptionMode.cs` | `ThunderPropagatorSubscriptionMode` | 8 | Defines ThunderPropagatorSubscriptionMode and its related behavior. |
+| `ThunderPropagatorSubscriptionStatus.cs` | `ThunderPropagatorSubscriptionStatus` | 12 | Defines ThunderPropagatorSubscriptionStatus and its related behavior. |
 
-## Enumeration Types
+## Types and Members
 
-### ThunderPropagatorConnectionState
-
-Defines connection lifecycle states:
-
-- `Ready` — Connection created, not yet connected
-- `Connecting` — Connection in progress
-- `Open` — Connection established and active
-- `Closed` — Connection closed normally
-- `HasError` — Connection encountered error
-
-### ThunderPropagatorChannelState
-
-Defines channel lifecycle states:
-
-- `Ready` — Channel created
-- `RequestingMetadata` — Fetching channel metadata
-- `HasMetadata` — Metadata received
-- `Opening` — Authentication in progress
-- `Open` — Channel ready for operations
-- `Closing` — Channel closing
-- `Closed` — Channel closed
-- `HasError` — Channel error state
-
-### ThunderPropagatorProtocolType
-
-Supported transport protocols:
-
-- `WebSocket` — Standard WebSocket protocol
-- `Quic` — QUIC (HTTP/3) protocol
-- `InfiniteDataStream` — HTTP-based streaming protocol
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`ThunderPropagatorChannelAuthenticationType`](#thunderpropagatorchannelauthenticationtype) | enum | Represents the ThunderPropagatorChannelAuthenticationType enum. | — | — |
+| [`ThunderPropagatorChannelFieldType`](#thunderpropagatorchannelfieldtype) | enum | Represents the ThunderPropagatorChannelFieldType enum. | — | — |
+| [`ThunderPropagatorChannelState`](#thunderpropagatorchannelstate) | enum | Represents the ThunderPropagatorChannelState enum. | — | — |
+| [`ThunderPropagatorChannelStorageType`](#thunderpropagatorchannelstoragetype) | enum | Represents the ThunderPropagatorChannelStorageType enum. | — | — |
+| [`ThunderPropagatorConnectionState`](#thunderpropagatorconnectionstate) | enum | Represents the ThunderPropagatorConnectionState enum. | — | — |
+| [`ThunderPropagatorPingPongState`](#thunderpropagatorpingpongstate) | enum | Represents the ThunderPropagatorPingPongState enum. | — | — |
+| [`ThunderPropagatorProtocolType`](#thunderpropagatorprotocoltype) | enum | Represents the ThunderPropagatorProtocolType enum. | — | — |
+| [`ThunderPropagatorRecordStatus`](#thunderpropagatorrecordstatus) | enum | Represents the ThunderPropagatorRecordStatus enum. | — | — |
+| [`ThunderPropagatorSubscriptionMode`](#thunderpropagatorsubscriptionmode) | enum | Represents the ThunderPropagatorSubscriptionMode enum. | — | — |
+| [`ThunderPropagatorSubscriptionStatus`](#thunderpropagatorsubscriptionstatus) | enum | Represents the ThunderPropagatorSubscriptionStatus enum. | — | — |
 
 ### ThunderPropagatorChannelAuthenticationType
 
-Authentication methods for channels:
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorChannelAuthenticationType enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-- `None` — No authentication
-- `Basic` — Username/password authentication
-- `OAuth2` — OAuth2 token authentication
+**Usage recipe**
 
-### ThunderPropagatorPingPongState
-
-Health check states:
-
-- `NotPinged` — No ping sent yet
-- `Pinged` — Ping sent, awaiting pong
-- `Ponged` — Pong received, healthy
-
-### ThunderPropagatorSubscriptionMode
-
-Subscription data delivery modes:
-
-- `Full` — Full record updates
-- `Delta` — Only changed fields
-- `Snapshot` — Snapshot + incremental updates
-
-### ThunderPropagatorSubscriptionStatus
-
-Subscription lifecycle states:
-
-- `Pending` — Subscription requested
-- `Active` — Subscription active, receiving data
-- `Paused` — Subscription paused
-- `Cancelled` — Subscription cancelled
-
-### ThunderPropagatorChannelFieldType
-
-Field data types in channel schemas:
-
-- `String` — Text field
-- `Integer` — Integer number
-- `Decimal` — Decimal number
-- `Boolean` — Boolean flag
-- `DateTime` — Date/time value
-
-### ThunderPropagatorChannelStorageType
-
-Storage backend types:
-
-- `Memory` — In-memory storage
-- `Redis` — Redis backend
-- `Database` — Relational database
-
-### ThunderPropagatorRecordStatus
-
-Record status in subscriptions:
-
-- `Active` — Record is active
-- `Deleted` — Record deleted
-- `Updated` — Record updated
-- `Inserted` — Record inserted
+```csharp
+// Resolve ThunderPropagatorChannelAuthenticationType from the configured service container or construct it with its declared dependencies.
+```
 
 [↑ Back to top](#contents)
 
----
+### ThunderPropagatorChannelFieldType
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorChannelFieldType enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorChannelFieldType from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorChannelState
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorChannelState enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorChannelState from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorChannelStorageType
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorChannelStorageType enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorChannelStorageType from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorConnectionState
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorConnectionState enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorConnectionState from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorPingPongState
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorPingPongState enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorPingPongState from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorProtocolType
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorProtocolType enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorProtocolType from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorRecordStatus
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorRecordStatus enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorRecordStatus from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorSubscriptionMode
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorSubscriptionMode enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorSubscriptionMode from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorSubscriptionStatus
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Enums`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorSubscriptionStatus enum.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorSubscriptionStatus from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Serialization and Contracts
+
+Serialization behavior is part of the public wire or persistence contract in this area. Preserve field names, ordering rules, content negotiation, and backward-compatibility expectations when changing these types.
+
+## Diagrams
+
+### Component overview
+
+```mermaid
+graph TD
+  Current["Enums"]
+  Current --> T0["ThunderPropagatorChannelAuthenticationType"]
+  Current --> T1["ThunderPropagatorChannelFieldType"]
+  Current --> T2["ThunderPropagatorChannelState"]
+  Current --> T3["ThunderPropagatorChannelStorageType"]
+  Current --> T4["ThunderPropagatorConnectionState"]
+  Current --> T5["ThunderPropagatorPingPongState"]
+  Current --> T6["ThunderPropagatorProtocolType"]
+  Current --> T7["ThunderPropagatorRecordStatus"]
+```
+
+The diagram shows the direct components documented by the **Enums** area.
+
+## Examples
+
+Start with `ThunderPropagatorChannelAuthenticationType` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Models](../README.md) — Parent models overview
-- [Infrastructure/Connections](../../Infrastructure/Connections/README.md) — Using connection states
-- [Infrastructure/Channels](../../Infrastructure/Channels/README.md) — Using channel states
+- [Parent area](../README.md)
+- [Connections](../Connections/README.md)
+- [Metadata](../Metadata/README.md)
+- [ReceivedMessage](../ReceivedMessage/README.md)
+- [Requests](../Requests/README.md)
+- [Subscriptions](../Subscriptions/README.md)
 
 [↑ Back to top](#contents)

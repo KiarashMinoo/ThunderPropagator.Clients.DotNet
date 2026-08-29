@@ -1,159 +1,140 @@
-# Models / Subscriptions
+# Subscriptions
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Key Types](#key-types)
+- [Types and Members](#types-and-members)
+- [Validation and Constraints](#validation-and-constraints)
 - [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Subscription management models including subscription tables, individual subscription items, update notifications, operational interfaces, and subscription collections.
+The **Subscriptions** area groups 4 documented types, including `IThunderPropagatorSubscriptionOperational`, `void`, `Task`, `Task`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ThunderPropagatorSubscriptions.cs | ThunderPropagatorSubscriptions | ~30 | Collection of subscriptions |
-| ThunderPropagatorSubscription.cs | ThunderPropagatorSubscription | ~40 | Individual subscription |
-| ThunderPropagatorSubscriptionItemUpdate.cs | ThunderPropagatorSubscriptionItemUpdate | ~20 | Subscription data update |
-| IThunderPropagatorSubscriptionOperational.cs | IThunderPropagatorSubscriptionOperational | ~15 | Operational interface |
-| ClientSubscriptionTable.cs | ClientSubscriptionTable | ~60 | Client-side subscription tracking |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ClientSubscriptionTable.cs` | `ClientSubscriptionTable` | 13 | Defines ClientSubscriptionTable and its related behavior. |
+| `IThunderPropagatorSubscriptionOperational.cs` | `IThunderPropagatorSubscriptionOperational` | 17 | Defines IThunderPropagatorSubscriptionOperational and its related behavior. |
+| `ThunderPropagatorSubscription.cs` | `void`, `Task`, `Task`, `ThunderPropagatorSubscription` | 243 | Defines void, Task, Task and its related behavior. |
+| `ThunderPropagatorSubscriptionItemUpdate.cs` | `ThunderPropagatorSubscriptionItemUpdate` | 37 | Defines ThunderPropagatorSubscriptionItemUpdate and its related behavior. |
+| `ThunderPropagatorSubscriptions.cs` | `ThunderPropagatorSubscriptions` | 120 | Defines ThunderPropagatorSubscriptions and its related behavior. |
 
-## Key Types
+## Types and Members
 
-### ThunderPropagatorSubscription
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Subscriptions`  
-**Implements**: `IThunderPropagatorSubscriptionOperational`
-
-Represents an individual subscription to a data stream.
-
-**Key Properties**:
-
-- `SubscriptionId: string` — Unique subscription identifier
-- `Channel: string` — Target channel name
-- `SubscribingKeys: IReadOnlyDictionary<string, string>` — Subscription key filters
-- `SubscribingFields: IReadOnlyCollection<string>` — Fields being received
-- `SubscriptionMode: ThunderPropagatorSubscriptionMode` — Delivery mode
-- `Status: ThunderPropagatorSubscriptionStatus` — Current state
-- `CreatedAt: DateTime` — Creation timestamp
-
-**Key Methods**:
-
-- `ActivateAsync()` — Activate subscription
-- `PauseAsync()` — Pause subscription
-- `CancelAsync()` — Cancel subscription
-
-### ThunderPropagatorSubscriptions
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
-
-Collection of subscriptions for a channel.
-
-**Key Properties**:
-
-- `Items: Dictionary<string, ThunderPropagatorSubscription>` — Active subscriptions
-- `Count: int` — Number of subscriptions
-
-**Key Methods**:
-
-- `Add(subscription)` — Add subscription
-- `Remove(subscriptionId)` — Remove subscription
-- `GetSubscription(subscriptionId)` — Retrieve by ID
-
-### ThunderPropagatorSubscriptionItemUpdate
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
-
-Represents an update to subscription data.
-
-**Key Properties**:
-
-- `SubscriptionId: string` — Target subscription
-- `RecordStatus: ThunderPropagatorRecordStatus` — Update type (Insert/Update/Delete)
-- `Keys: Dictionary<string, string>` — Record keys
-- `Fields: Dictionary<string, object?>` — Updated field values
-- `Timestamp: DateTime` — Update timestamp
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`IThunderPropagatorSubscriptionOperational`](#ithunderpropagatorsubscriptionoperational) | interface | Represents the IThunderPropagatorSubscriptionOperational interface. | — | — |
+| [`void`](#void) | delegate | Represents the void delegate. | — | `ThunderPropagatorFieldUpdatedEventHandler(…)`, `SubscribingKeys`, `SubscribingFields`, `SubscriptionMode`, `SubscribeAsync(…)` |
+| [`Task`](#task) | delegate | Represents the Task delegate. | — | `SubscribingKeys`, `SubscribingFields`, `SubscriptionMode`, `SubscribeAsync(…)` |
+| [`Task`](#task) | delegate | Represents the Task delegate. | — | `SubscribingKeys`, `SubscribingFields`, `SubscriptionMode`, `SubscribeAsync(…)` |
 
 ### IThunderPropagatorSubscriptionOperational
 
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
+- **Kind:** interface
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the IThunderPropagatorSubscriptionOperational interface.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Interface for subscription operations.
+**Usage recipe**
 
-**Key Methods**:
-
-- `Task ActivateAsync(CancellationToken)` — Activate subscription
-- `Task PauseAsync(CancellationToken)` — Pause updates
-- `Task CancelAsync(CancellationToken)` — Cancel and remove
-
-### ClientSubscriptionTable
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
-
-Client-side tracking table for subscription state management.
-
-**Key Properties**:
-
-- `Subscriptions: BindingDictionary<string, ThunderPropagatorSubscription>` — Subscription registry
-- `UpdateCallbacks: Dictionary<string, Action<ThunderPropagatorSubscriptionItemUpdate>>` — Update handlers
-
-**Key Methods**:
-
-- `RegisterSubscription(subscription, callback)` — Register new subscription
-- `UnregisterSubscription(subscriptionId)` — Remove subscription
-- `ProcessUpdate(update)` — Handle incoming update
+```csharp
+// Resolve IThunderPropagatorSubscriptionOperational from the configured service container or construct it with its declared dependencies.
+```
 
 [↑ Back to top](#contents)
 
----
+### void
+
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `ThunderPropagatorFieldUpdatedEventHandler(…)`, `SubscribingKeys`, `SubscribingFields`, `SubscriptionMode`, `SubscribeAsync(…)`
+- **Summary:** Represents the void delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve void from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### Task
+
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `SubscribingKeys`, `SubscribingFields`, `SubscriptionMode`, `SubscribeAsync(…)`
+- **Summary:** Represents the Task delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve Task from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### Task
+
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Subscriptions`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `SubscribingKeys`, `SubscribingFields`, `SubscriptionMode`, `SubscribeAsync(…)`
+- **Summary:** Represents the Task delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve Task from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Validation and Constraints
+
+Inputs are validated at component boundaries. Callers should provide non-null required values and handle domain or argument exceptions without retrying invalid requests unchanged.
 
 ## Diagrams
 
-### Subscription Lifecycle
+### Component overview
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Pending: CreateSubscription()
-    Pending --> Active: Server confirms
-    Active --> Paused: PauseAsync()
-    Paused --> Active: ActivateAsync()
-    Active --> Cancelled: CancelAsync()
-    Paused --> Cancelled: CancelAsync()
-    Cancelled --> [*]
+graph TD
+  Current["Subscriptions"]
+  Current --> T0["IThunderPropagatorSubscriptionOperational"]
+  Current --> T1["void"]
+  Current --> T2["Task"]
+  Current --> T3["Task"]
 ```
 
-### Subscription Update Flow
+The diagram shows the direct components documented by the **Subscriptions** area.
 
-```mermaid
-sequenceDiagram
-    participant Server as ThunderPropagator Server
-    participant Conn as Connection
-    participant Chan as Channel
-    participant SubTable as ClientSubscriptionTable
-    participant App as Application
-    
-    Server->>Conn: Subscription update
-    Conn->>Chan: MessageReceived
-    Chan->>Chan: Parse update
-    Chan->>SubTable: ProcessUpdate(update)
-    SubTable->>SubTable: Lookup subscription
-    SubTable->>App: Invoke callback(update)
-    App->>App: Handle data
-```
+## Examples
 
-Shows the flow of subscription updates from server to application callback.
-
-[↑ Back to top](#contents)
-
----
+Start with `IThunderPropagatorSubscriptionOperational` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Models](../README.md) — Parent models overview
-- [Infrastructure/Channels](../../Infrastructure/Channels/README.md) — Channels managing subscriptions
+- [Parent area](../README.md)
+- [Connections](../Connections/README.md)
+- [Enums](../Enums/README.md)
+- [Metadata](../Metadata/README.md)
+- [ReceivedMessage](../ReceivedMessage/README.md)
+- [Requests](../Requests/README.md)
 
 [↑ Back to top](#contents)

@@ -4,276 +4,115 @@
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
-  - [ThunderPropagatorWebSocketClient](#thunderpropagatorwebsocketclient)
-  - [ThunderPropagatorQuicClient](#thunderpropagatorquicclient)
-  - [ThunderPropagatorInfiniteDataStreamClient](#thunderpropagatorinfinitedatastreamclient)
+- [Types and Members](#types-and-members)
+- [Serialization and Contracts](#serialization-and-contracts)
 - [Diagrams](#diagrams)
-  - [Client Hierarchy](#client-hierarchy)
-  - [Client Creation Sequence](#client-creation-sequence)
-- [Usage Examples](#usage-examples)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-The Clients folder contains protocol-specific client facades that serve as the primary entry points for creating connections to ThunderPropagator servers. Each client class is a thin wrapper around the protocol-agnostic `ThunderPropagatorClient` base class, specialized for a specific transport protocol (WebSocket, QUIC, or InfiniteDataStream).
-
-All client classes use conditional sealing (`#if !DEBUG sealed #endif`) to allow inheritance in debug builds while preventing inheritance in release builds. These clients delegate all functionality to the base `ThunderPropagatorClient` class, which implements the three-layer architecture pattern.
+The **Clients** area groups 3 documented types, including `ThunderPropagatorInfiniteDataStreamClient`, `ThunderPropagatorQuicClient`, `ThunderPropagatorWebSocketClient`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ThunderPropagatorWebSocketClient.cs | ThunderPropagatorWebSocketClient | ~18 | WebSocket protocol client facade |
-| ThunderPropagatorQuicClient.cs | ThunderPropagatorQuicClient | ~18 | QUIC protocol client facade |
-| ThunderPropagatorInfiniteDataStreamClient.cs | ThunderPropagatorInfiniteDataStreamClient | ~18 | InfiniteDataStream protocol client facade |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ThunderPropagatorInfiniteDataStreamClient.cs` | `ThunderPropagatorInfiniteDataStreamClient` | 18 | Defines ThunderPropagatorInfiniteDataStreamClient and its related behavior. |
+| `ThunderPropagatorQuicClient.cs` | `ThunderPropagatorQuicClient` | 18 | Defines ThunderPropagatorQuicClient and its related behavior. |
+| `ThunderPropagatorWebSocketClient.cs` | `ThunderPropagatorWebSocketClient` | 18 | Defines ThunderPropagatorWebSocketClient and its related behavior. |
 
-## Types & Members
+## Types and Members
 
-### ThunderPropagatorWebSocketClient
-
-**Kind**: Class (sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Clients`  
-**Inherits**: `ThunderPropagatorClient`
-
-Protocol-specific client for establishing WebSocket connections to ThunderPropagator servers.
-
-**Key Constructor**:
-
-```csharp
-public ThunderPropagatorWebSocketClient(
-    ThunderPropagatorWebSocketConnectionConfiguration configuration, 
-    ILoggerProvider loggerProvider)
-```
-
-- `configuration` — WebSocket-specific connection configuration (URI, SSL settings, headers, etc.)
-- `loggerProvider` — Logger factory for creating loggers
-
-**Thread-safety**: Safe for concurrent operations (inherited from base)
-
-**Usage Recipe**:
-
-```csharp
-var config = new ThunderPropagatorWebSocketConnectionConfiguration 
-{
-    Uri = "wss://server.example.com/thunderpropagator"
-};
-
-var client = new ThunderPropagatorWebSocketClient(config, loggerProvider);
-await client.ConnectAsync();
-var channel = await client.CreateChannelAsync("trades");
-```
-
-[↑ Back to top](#contents)
-
----
-
-### ThunderPropagatorQuicClient
-
-**Kind**: Class (sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Clients`  
-**Inherits**: `ThunderPropagatorClient`
-
-Protocol-specific client for establishing QUIC (HTTP/3) connections to ThunderPropagator servers.
-
-**Key Constructor**:
-
-```csharp
-public ThunderPropagatorQuicClient(
-    ThunderPropagatorQuicConnectionConfiguration configuration, 
-    ILoggerProvider loggerProvider)
-```
-
-- `configuration` — QUIC-specific connection configuration (endpoint, certificate validation, etc.)
-- `loggerProvider` — Logger factory for creating loggers
-
-**Thread-safety**: Safe for concurrent operations (inherited from base)
-
-**Usage Recipe**:
-
-```csharp
-var config = new ThunderPropagatorQuicConnectionConfiguration 
-{
-    // QUIC-specific configuration
-};
-
-var client = new ThunderPropagatorQuicClient(config, loggerProvider);
-await client.ConnectAsync();
-var channel = await client.CreateChannelAsync("market-data");
-```
-
-[↑ Back to top](#contents)
-
----
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`ThunderPropagatorInfiniteDataStreamClient`](#thunderpropagatorinfinitedatastreamclient) | class | Represents the ThunderPropagatorInfiniteDataStreamClient class. | `ThunderPropagatorClient` | — |
+| [`ThunderPropagatorQuicClient`](#thunderpropagatorquicclient) | class | Represents the ThunderPropagatorQuicClient class. | `ThunderPropagatorClient` | — |
+| [`ThunderPropagatorWebSocketClient`](#thunderpropagatorwebsocketclient) | class | Represents the ThunderPropagatorWebSocketClient class. | `ThunderPropagatorClient` | — |
 
 ### ThunderPropagatorInfiniteDataStreamClient
 
-**Kind**: Class (sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Clients`  
-**Inherits**: `ThunderPropagatorClient`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Clients`
+- **Inherits/implements:** `ThunderPropagatorClient`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorInfiniteDataStreamClient class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Protocol-specific client for establishing InfiniteDataStream connections to ThunderPropagator servers.
-
-**Key Constructor**:
-
-```csharp
-public ThunderPropagatorInfiniteDataStreamClient(
-    ThunderPropagatorInfiniteDataStreamConnectionConfiguration configuration, 
-    ILoggerProvider loggerProvider)
-```
-
-- `configuration` — InfiniteDataStream-specific connection configuration
-- `loggerProvider` — Logger factory for creating loggers
-
-**Thread-safety**: Safe for concurrent operations (inherited from base)
-
-**Usage Recipe**:
+**Usage recipe**
 
 ```csharp
-var config = new ThunderPropagatorInfiniteDataStreamConnectionConfiguration 
-{
-    // InfiniteDataStream-specific configuration
-};
-
-var client = new ThunderPropagatorInfiniteDataStreamClient(config, loggerProvider);
-await client.ConnectAsync();
-var channel = await client.CreateChannelAsync("events");
+// Resolve ThunderPropagatorInfiniteDataStreamClient from the configured service container or construct it with its declared dependencies.
 ```
 
 [↑ Back to top](#contents)
 
----
+### ThunderPropagatorQuicClient
+
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Clients`
+- **Inherits/implements:** `ThunderPropagatorClient`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorQuicClient class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorQuicClient from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ThunderPropagatorWebSocketClient
+
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Clients`
+- **Inherits/implements:** `ThunderPropagatorClient`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorWebSocketClient class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorWebSocketClient from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Serialization and Contracts
+
+Serialization behavior is part of the public wire or persistence contract in this area. Preserve field names, ordering rules, content negotiation, and backward-compatibility expectations when changing these types.
 
 ## Diagrams
 
-### Client Hierarchy
+### Component overview
 
 ```mermaid
-classDiagram
-    class ThunderPropagatorClient {
-        <<abstract>>
-        +ThunderPropagatorConnection: IThunderPropagatorConnection
-        +ConnectionProtocol: ThunderPropagatorProtocolType
-        +ConnectionState: ThunderPropagatorConnectionState
-        +ConnectAsync(CancellationToken): Task
-        +CreateChannelAsync(string): Task~IThunderPropagatorChannel~
-    }
-    
-    class ThunderPropagatorWebSocketClient {
-        +ThunderPropagatorWebSocketClient(config, logger)
-    }
-    
-    class ThunderPropagatorQuicClient {
-        +ThunderPropagatorQuicClient(config, logger)
-    }
-    
-    class ThunderPropagatorInfiniteDataStreamClient {
-        +ThunderPropagatorInfiniteDataStreamClient(config, logger)
-    }
-    
-    ThunderPropagatorClient <|-- ThunderPropagatorWebSocketClient
-    ThunderPropagatorClient <|-- ThunderPropagatorQuicClient
-    ThunderPropagatorClient <|-- ThunderPropagatorInfiniteDataStreamClient
+graph TD
+  Current["Clients"]
+  Current --> T0["ThunderPropagatorInfiniteDataStreamClient"]
+  Current --> T1["ThunderPropagatorQuicClient"]
+  Current --> T2["ThunderPropagatorWebSocketClient"]
 ```
 
-The diagram shows the inheritance hierarchy where each protocol-specific client extends the base `ThunderPropagatorClient` class.
+The diagram shows the direct components documented by the **Clients** area.
 
-[↑ Back to top](#contents)
+## Examples
 
----
-
-### Client Creation Sequence
-
-```mermaid
-sequenceDiagram
-    participant App as Application
-    participant Client as ThunderPropagatorWebSocketClient
-    participant Base as ThunderPropagatorClient
-    participant Conn as ThunderPropagatorWebSocketConnection
-    
-    App->>Client: new(config, loggerProvider)
-    Client->>Base: base(WebSocket, config, loggerProvider)
-    Base->>Conn: new ThunderPropagatorWebSocketConnection(config, loggerProvider)
-    Conn-->>Base: connection instance
-    Base-->>Client: initialization complete
-    Client-->>App: client ready
-    
-    App->>Client: ConnectAsync()
-    Client->>Base: ConnectAsync()
-    Base->>Conn: ConnectAsync()
-    Conn-->>Base: connection established
-    Base-->>Client: connected
-    Client-->>App: Task complete
-```
-
-This sequence shows the typical initialization and connection flow when creating a protocol-specific client.
-
-[↑ Back to top](#contents)
-
----
-
-## Usage Examples
-
-### Creating Different Protocol Clients
-
-```csharp
-// WebSocket client
-var wsConfig = new ThunderPropagatorWebSocketConnectionConfiguration 
-{
-    Uri = "wss://server.com/thunderpropagator"
-};
-var wsClient = new ThunderPropagatorWebSocketClient(wsConfig, loggerProvider);
-
-// QUIC client
-var quicConfig = new ThunderPropagatorQuicConnectionConfiguration 
-{
-    // QUIC settings
-};
-var quicClient = new ThunderPropagatorQuicClient(quicConfig, loggerProvider);
-
-// InfiniteDataStream client
-var idsConfig = new ThunderPropagatorInfiniteDataStreamConnectionConfiguration 
-{
-    // InfiniteDataStream settings
-};
-var idsClient = new ThunderPropagatorInfiniteDataStreamClient(idsConfig, loggerProvider);
-```
-
-### Complete Connection Lifecycle
-
-```csharp
-var config = new ThunderPropagatorWebSocketConnectionConfiguration 
-{
-    Uri = "wss://server.example.com/thunderpropagator"
-};
-
-var client = new ThunderPropagatorWebSocketClient(config, loggerProvider);
-
-// Connect to server
-await client.ConnectAsync();
-
-// Check connection state
-if (client.ConnectionState == ThunderPropagatorConnectionState.Open)
-{
-    // Create channel
-    var channel = await client.CreateChannelAsync("myChannel");
-    
-    // Use channel...
-    
-    // Disconnect when done
-    await client.Disconnect();
-}
-```
-
-[↑ Back to top](#contents)
-
----
+Start with `ThunderPropagatorInfiniteDataStreamClient` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [ThunderPropagatorClient (root)](../README.md) — Base client implementation
-- [Channels](../Channels/README.md) — Channel implementations for each protocol
-- [Connections](../Connections/README.md) — Connection implementations for each protocol
-- [Infrastructure/Connections](../Infrastructure/Connections/README.md) — Connection abstractions and base classes
+- [Documentation home](../README.md)
+- [Channels](../Channels/README.md)
+- [Connections](../Connections/README.md)
+- [Infrastructure](../Infrastructure/README.md)
+- [Models](../Models/README.md)
+- [instructions](../instructions/README.md)
 
 [↑ Back to top](#contents)

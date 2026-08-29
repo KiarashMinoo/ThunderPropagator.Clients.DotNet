@@ -1,97 +1,133 @@
-# Infrastructure / Loggers
+# Loggers
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
+- [Types and Members](#types-and-members)
+- [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Custom lightweight logging abstraction providing `ILogger`, `ILoggerProvider`, `LogLevel`, and `EventId` types. **This is NOT Microsoft.Extensions.Logging**. The library uses its own logging interfaces to avoid external logging dependencies.
+The **Loggers** area groups 4 documented types, including `EventId`, `ILogger`, `ILoggerProvider`, `LogLevel`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ILogger.cs | ILogger | ~15 | Logger interface with Log methods |
-| ILoggerProvider.cs | ILoggerProvider | ~10 | Logger factory interface |
-| LogLevel.cs | LogLevel | ~20 | Log level enumeration |
-| EventId.cs | EventId | ~10 | Event identifier structure |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `EventId.cs` | `EventId` | 65 | Defines EventId and its related behavior. |
+| `ILogger.cs` | `ILogger` | 28 | Defines ILogger and its related behavior. |
+| `ILoggerProvider.cs` | `ILoggerProvider` | 7 | Defines ILoggerProvider and its related behavior. |
+| `LogLevel.cs` | `LogLevel` | 46 | Defines LogLevel and its related behavior. |
 
-## Types & Members
+## Types and Members
 
-### ILogger
-
-**Kind**: Interface (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
-
-Defines logging operations.
-
-**Key Methods**:
-
-```csharp
-void Log(LogLevel logLevel, Exception? exception, string? message, params object?[] args)
-```
-
-Logs a message with level, optional exception, and format args.
-
-[↑ Back to top](#contents)
-
----
-
-### ILoggerProvider
-
-**Kind**: Interface (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
-
-Logger factory for creating logger instances.
-
-**Key Methods**:
-
-```csharp
-ILogger CreateLogger(string categoryName)
-```
-
-Creates a logger for the specified category (typically class name).
-
-[↑ Back to top](#contents)
-
----
-
-### LogLevel
-
-**Kind**: Enum (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
-
-Log severity levels:
-
-- `Trace` — Most detailed
-- `Debug` — Debug information
-- `Information` — Informational messages
-- `Warning` — Warnings
-- `Error` — Errors
-- `Critical` — Critical failures
-- `None` — Logging disabled
-
-[↑ Back to top](#contents)
-
----
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`EventId`](#eventid) | struct | Identifies a logging event. The primary identifier is the "Id" property, with the "Name" property providing a short description of this type of event. | `IEquatable<EventId>` | `EventId(…)`, `Id`, `Name`, `ToString(…)`, `Equals(…)`, `Equals(…)` |
+| [`ILogger`](#ilogger) | interface | Represents a type used to perform logging. | — | — |
+| [`ILoggerProvider`](#iloggerprovider) | interface | Represents the ILoggerProvider interface. | `IDisposable` | — |
+| [`LogLevel`](#loglevel) | enum | Defines logging severity levels. | — | — |
 
 ### EventId
 
-**Kind**: Struct (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
+- **Kind:** struct
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
+- **Inherits/implements:** `IEquatable<EventId>`
+- **Attributes:** None detected
+- **Key members:** `EventId(…)`, `Id`, `Name`, `ToString(…)`, `Equals(…)`, `Equals(…)`, `GetHashCode(…)`
+- **Summary:** Identifies a logging event. The primary identifier is the "Id" property, with the "Name" property providing a short description of this type of event.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Identifier for log events. Contains `Id` (int) and optional `Name` (string).
+**Usage recipe**
+
+```csharp
+// Resolve EventId from the configured service container or construct it with its declared dependencies.
+```
 
 [↑ Back to top](#contents)
 
----
+### ILogger
+
+- **Kind:** interface
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents a type used to perform logging.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ILogger from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### ILoggerProvider
+
+- **Kind:** interface
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
+- **Inherits/implements:** `IDisposable`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ILoggerProvider interface.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve ILoggerProvider from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### LogLevel
+
+- **Kind:** enum
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Loggers`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Defines logging severity levels.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve LogLevel from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Diagrams
+
+### Component overview
+
+```mermaid
+graph TD
+  Current["Loggers"]
+  Current --> T0["EventId"]
+  Current --> T1["ILogger"]
+  Current --> T2["ILoggerProvider"]
+  Current --> T3["LogLevel"]
+```
+
+The diagram shows the direct components documented by the **Loggers** area.
+
+## Examples
+
+Start with `EventId` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Infrastructure](../README.md) — Parent infrastructure overview
+- [Parent area](../README.md)
+- [Channels](../Channels/README.md)
+- [Connections](../Connections/README.md)
+- [Requests](../Requests/README.md)
+- [Responses](../Responses/README.md)
 
 [↑ Back to top](#contents)

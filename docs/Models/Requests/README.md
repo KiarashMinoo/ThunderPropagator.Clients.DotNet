@@ -1,114 +1,75 @@
-# Models / Requests
+# Requests
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Key Types](#key-types)
+- [Types and Members](#types-and-members)
+- [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Concrete request implementations for channel operations including metadata requests, subscriptions, pings, unsubscribe, and a helper for generating request IDs.
-
-All request types inherit from `ThunderPropagatorRequestBase` in Infrastructure.
+The **Requests** area groups 1 documented type, including `RequestIdHelper`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ThunderPropagatorMetadataRequest.cs | ThunderPropagatorMetadataRequest | ~15 | Request channel metadata |
-| ThunderPropagatorSubscriptionRequest.cs | ThunderPropagatorSubscriptionRequest | ~40 | Subscribe to data stream |
-| ThunderPropagatorUnsubscribeRequest.cs | ThunderPropagatorUnsubscribeRequest | ~15 | Unsubscribe from data |
-| ThunderPropagatorPingRequest.cs | ThunderPropagatorPingRequest | ~10 | Health check ping |
-| RequestIdHelper.cs | RequestIdHelper | ~10 | Generate unique request IDs |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `RequestIdHelper.cs` | `RequestIdHelper` | 7 | Defines RequestIdHelper and its related behavior. |
+| `ThunderPropagatorMetadataRequest.cs` | `ThunderPropagatorMetadataRequest` | 17 | Defines ThunderPropagatorMetadataRequest and its related behavior. |
+| `ThunderPropagatorPingRequest.cs` | `ThunderPropagatorPingRequest` | 17 | Defines ThunderPropagatorPingRequest and its related behavior. |
+| `ThunderPropagatorSubscriptionRequest.cs` | `ThunderPropagatorSubscriptionRequest` | 37 | Defines ThunderPropagatorSubscriptionRequest and its related behavior. |
+| `ThunderPropagatorUnsubscribeRequest.cs` | `ThunderPropagatorUnsubscribeRequest` | 31 | Defines ThunderPropagatorUnsubscribeRequest and its related behavior. |
 
-## Key Types
+## Types and Members
 
-### ThunderPropagatorMetadataRequest
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Requests`  
-**Inherits**: `ThunderPropagatorRequestBase`
-
-Requests channel metadata from the server.
-
-**Usage**:
-
-```csharp
-var request = new ThunderPropagatorMetadataRequest
-{
-    Route = new ThunderPropagatorRequestRoute 
-    { 
-        Channel = "myChannel", 
-        Endpoint = "metadata" 
-    }
-};
-```
-
-### ThunderPropagatorSubscriptionRequest
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Requests`  
-**Inherits**: `ThunderPropagatorRequestBase`
-
-Subscribes to a data stream with specified keys and fields.
-
-**Key Properties**:
-
-- `SubscribingKeys: IReadOnlyDictionary<string, string>` — Key-value pairs for subscription
-- `SubscribingFields: IReadOnlyCollection<string>` — Fields to receive
-- `SubscriptionMode: ThunderPropagatorSubscriptionMode` — Full/Delta/Snapshot
-
-**Usage**:
-
-```csharp
-var request = new ThunderPropagatorSubscriptionRequest
-{
-    Route = new ThunderPropagatorRequestRoute { Channel = "trades", Endpoint = "subscribe" },
-    SubscribingKeys = new Dictionary<string, string> { ["symbol"] = "AAPL" },
-    SubscribingFields = new[] { "price", "volume", "timestamp" },
-    SubscriptionMode = ThunderPropagatorSubscriptionMode.Full
-};
-```
-
-### ThunderPropagatorUnsubscribeRequest
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Requests`  
-**Inherits**: `ThunderPropagatorRequestBase`
-
-Unsubscribes from a data stream.
-
-**Key Properties**:
-
-- `SubscriptionId: string` — ID of subscription to cancel
-
-### ThunderPropagatorPingRequest
-
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Requests`  
-**Inherits**: `ThunderPropagatorRequestBase`
-
-Health check request to verify channel connectivity.
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`RequestIdHelper`](#requestidhelper) | class | Represents the RequestIdHelper class. | — | `Generate(…)` |
 
 ### RequestIdHelper
 
-**Namespace**: `ThunderPropagator.Clients.DotNet.Models.Requests`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Models.Requests`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `Generate(…)`
+- **Summary:** Represents the RequestIdHelper class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Helper class for generating unique request identifiers.
-
-**Key Methods**:
+**Usage recipe**
 
 ```csharp
-public static string GenerateId()
+// Resolve RequestIdHelper from the configured service container or construct it with its declared dependencies.
 ```
-
-Generates a unique request ID (typically GUID-based).
 
 [↑ Back to top](#contents)
 
----
+## Diagrams
+
+### Component overview
+
+```mermaid
+graph TD
+  Current["Requests"]
+  Current --> T0["RequestIdHelper"]
+```
+
+The diagram shows the direct components documented by the **Requests** area.
+
+## Examples
+
+Start with `RequestIdHelper` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Infrastructure/Requests](../../Infrastructure/Requests/README.md) — Base request class
-- [Models](../README.md) — Parent models overview
+- [Parent area](../README.md)
+- [Connections](../Connections/README.md)
+- [Enums](../Enums/README.md)
+- [Metadata](../Metadata/README.md)
+- [ReceivedMessage](../ReceivedMessage/README.md)
+- [Subscriptions](../Subscriptions/README.md)
 
 [↑ Back to top](#contents)

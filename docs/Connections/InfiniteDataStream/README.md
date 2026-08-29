@@ -1,122 +1,94 @@
-# Connections / InfiniteDataStream
+# InfiniteDataStream
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
+- [Types and Members](#types-and-members)
+- [Performance Notes](#performance-notes)
 - [Diagrams](#diagrams)
-- [Usage Examples](#usage-examples)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-The InfiniteDataStream subdirectory contains the InfiniteDataStream protocol implementation using HTTP-based streaming. Uses `HttpClient` for HTTP requests and an unbounded channel for message queuing.
+The **InfiniteDataStream** area groups 2 documented types, including `ThunderPropagatorInfiniteDataStreamConnection`, `ThunderPropagatorInfiniteDataStreamConnectionConfiguration`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ThunderPropagatorInfiniteDataStreamConnection.cs | ThunderPropagatorInfiniteDataStreamConnection | ~50 | InfiniteDataStream connection via HTTP |
-| ThunderPropagatorInfiniteDataStreamConnectionConfiguration.cs | ThunderPropagatorInfiniteDataStreamConnectionConfiguration | ~15 | InfiniteDataStream configuration |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ThunderPropagatorInfiniteDataStreamConnection.cs` | `ThunderPropagatorInfiniteDataStreamConnection` | 52 | Defines ThunderPropagatorInfiniteDataStreamConnection and its related behavior. |
+| `ThunderPropagatorInfiniteDataStreamConnectionConfiguration.cs` | `ThunderPropagatorInfiniteDataStreamConnectionConfiguration` | 12 | Defines ThunderPropagatorInfiniteDataStreamConnectionConfiguration and its related behavior. |
 
-## Types & Members
+## Types and Members
+
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`ThunderPropagatorInfiniteDataStreamConnection`](#thunderpropagatorinfinitedatastreamconnection) | class | Represents the ThunderPropagatorInfiniteDataStreamConnection class. | `AbstractThunderPropagatorConnection<ThunderPropagatorInfiniteDataStreamConnectionConfiguration>` | `InternalConnectAsync(…)`, `InternalDisconnectAsync(…)`, `ReceiveAsync(…)`, `InternalSendAsync(…)`, `SendAsync(…)`, `AddMessageAsync(…)` |
+| [`ThunderPropagatorInfiniteDataStreamConnectionConfiguration`](#thunderpropagatorinfinitedatastreamconnectionconfiguration) | class | Represents the ThunderPropagatorInfiniteDataStreamConnectionConfiguration class. | `AbstractThunderPropagatorConfiguration` | — |
 
 ### ThunderPropagatorInfiniteDataStreamConnection
 
-**Kind**: Class (internal, sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Connections.InfiniteDataStream`  
-**Inherits**: `AbstractThunderPropagatorConnection<ThunderPropagatorInfiniteDataStreamConnectionConfiguration>`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Connections.InfiniteDataStream`
+- **Inherits/implements:** `AbstractThunderPropagatorConnection<ThunderPropagatorInfiniteDataStreamConnectionConfiguration>`
+- **Attributes:** None detected
+- **Key members:** `InternalConnectAsync(…)`, `InternalDisconnectAsync(…)`, `ReceiveAsync(…)`, `InternalSendAsync(…)`, `SendAsync(…)`, `AddMessageAsync(…)`, `DisposeManagedResources(…)`
+- **Summary:** Represents the ThunderPropagatorInfiniteDataStreamConnection class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-HTTP-based streaming connection with message channel buffering.
-
-**Key Properties**:
-
-- `_httpClient: HttpClient` — Configured with infinite timeout and base address
-- `_receivedMessagesChannel: Channel<string>` — Unbounded channel for message queuing
-
-**Key Methods**:
+**Usage recipe**
 
 ```csharp
-internal Task<HttpResponseMessage> SendAsync(
-    HttpRequestMessage requestMessage,
-    HttpCompletionOption httpCompletionOption = ResponseContentRead,
-    CancellationToken cancellationToken = default)
+// Resolve ThunderPropagatorInfiniteDataStreamConnection from the configured service container or construct it with its declared dependencies.
 ```
-
-Sends HTTP request. Used by channels for metadata requests.
-
-```csharp
-internal ValueTask AddMessageAsync(string message, CancellationToken cancellationToken = default)
-```
-
-Adds message to receive channel. Used for streaming message ingestion.
-
-**Overridden Methods**:
-
-- `InternalConnectAsync()` — Writes "PROBE" to channel
-- `ReceiveAsync()` — Reads from message channel
-- `InternalSendAsync()` — No-op (HTTP requests use `SendAsync` directly)
-- `InternalDisconnectAsync()` — No-op
 
 [↑ Back to top](#contents)
-
----
 
 ### ThunderPropagatorInfiniteDataStreamConnectionConfiguration
 
-**Kind**: Class (public, sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Connections.InfiniteDataStream`  
-**Inherits**: `AbstractThunderPropagatorConfiguration`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Connections.InfiniteDataStream`
+- **Inherits/implements:** `AbstractThunderPropagatorConfiguration`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorInfiniteDataStreamConnectionConfiguration class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Configuration inherits `Uri` from base class.
+**Usage recipe**
+
+```csharp
+// Resolve ThunderPropagatorInfiniteDataStreamConnectionConfiguration from the configured service container or construct it with its declared dependencies.
+```
 
 [↑ Back to top](#contents)
 
----
+## Performance Notes
+
+This area contains performance-sensitive constructs such as pooled buffers, spans, asynchronous value types, or concurrent collections. Avoid unnecessary allocations and blocking calls on streaming or message-processing paths.
 
 ## Diagrams
 
-### InfiniteDataStream Architecture
+### Component overview
 
 ```mermaid
-graph LR
-    Channel[Channel] -->|AddMessageAsync| MsgChannel[Message Channel]
-    MsgChannel -->|ReadAsync| Conn[Connection]
-    Conn -->|MessageReceived| Client[Client]
-    
-    Channel -->|SendAsync| HTTP[HttpClient]
-    HTTP -->|GET /metadata| Server[Server]
-    Server -->|Response| HTTP
+graph TD
+  Current["InfiniteDataStream"]
+  Current --> T0["ThunderPropagatorInfiniteDataStreamConnection"]
+  Current --> T1["ThunderPropagatorInfiniteDataStreamConnectionConfiguration"]
 ```
 
-[↑ Back to top](#contents)
+The diagram shows the direct components documented by the **InfiniteDataStream** area.
 
----
+## Examples
 
-## Usage Examples
-
-```csharp
-var config = new ThunderPropagatorInfiniteDataStreamConnectionConfiguration
-{
-    Uri = "https://server.example.com"
-};
-
-var connection = new ThunderPropagatorInfiniteDataStreamConnection(config, loggerProvider);
-await connection.ConnectAsync();
-
-// HTTP requests via SendAsync
-var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/channel/test/metadata");
-var response = await connection.SendAsync(httpRequest);
-```
-
-[↑ Back to top](#contents)
-
----
+Start with `ThunderPropagatorInfiniteDataStreamConnection` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Connections](../README.md) — Parent connections overview
-- [Channels](../../Channels/README.md) — InfiniteDataStream channel with HTTP metadata
+- [Parent area](../README.md)
+- [Quic](../Quic/README.md)
+- [WebSocket](../WebSocket/README.md)
 
 [↑ Back to top](#contents)

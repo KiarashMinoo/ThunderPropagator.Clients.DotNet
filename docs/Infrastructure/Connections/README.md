@@ -1,143 +1,127 @@
-# Infrastructure / Connections
+# Connections
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
+- [Types and Members](#types-and-members)
+- [Serialization and Contracts](#serialization-and-contracts)
+- [Validation and Constraints](#validation-and-constraints)
+- [Performance Notes](#performance-notes)
 - [Diagrams](#diagrams)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-Contains abstract connection base class, interface, and configuration base defining connection lifecycle, state management, and transport abstraction for all protocol implementations.
+The **Connections** area groups 3 documented types, including `AbstractThunderPropagatorConfiguration`, `Task`, `IThunderPropagatorConnection`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| AbstractThunderPropagatorConnection.cs | AbstractThunderPropagatorConnection<TConnectionConfiguration> | ~194 | Abstract base for all connection implementations |
-| IThunderPropagatorConnection.cs | IThunderPropagatorConnection | ~20 | Public connection interface |
-| AbstractThunderPropagatorConfiguration.cs | AbstractThunderPropagatorConfiguration | ~15 | Base configuration class |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `AbstractThunderPropagatorConfiguration.cs` | `AbstractThunderPropagatorConfiguration` | 13 | Defines AbstractThunderPropagatorConfiguration and its related behavior. |
+| `AbstractThunderPropagatorConnection.cs` | `Task`, `AbstractThunderPropagatorConnection` | 194 | Defines Task, AbstractThunderPropagatorConnection and its related behavior. |
+| `IThunderPropagatorConnection.cs` | `IThunderPropagatorConnection` | 21 | Defines IThunderPropagatorConnection and its related behavior. |
 
-## Types & Members
+## Types and Members
 
-### AbstractThunderPropagatorConnection<TConnectionConfiguration>
-
-**Kind**: Abstract class (internal)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Connections`  
-**Implements**: `IThunderPropagatorConnection`, `INotifyPropertyChanged`  
-**Inherits**: `DisposableObject` (from BuildingBlocks)
-
-Core connection implementation managing lifecycle, receive loops, and state transitions.
-
-**Key Properties**:
-
-- `ConnectionState: ThunderPropagatorConnectionState` — Current connection state
-- `ConnectionInfo: ThunderPropagatorConnectionResponse` — Server connection details
-- `ConnectionId: string` — Unique connection identifier
-
-**Abstract Methods** (protocol-specific):
-
-- `InternalConnectAsync()` — Establish transport connection
-- `InternalDisconnectAsync()` — Close transport connection
-- `ReceiveAsync()` — Read next message from transport
-- `InternalSendAsync()` — Write message to transport
-
-**Concrete Methods**:
-
-- `ConnectAsync()` — Public connect with state management and 24h receive loop
-- `DisconnectAsync()` — Public disconnect
-- `OnMessageReceived(message)` — Filters PROBE, parses ConnectionResponse, raises MessageReceived
-
-**Features**:
-
-- Auto-reconnection support with 24-hour timeout
-- Semaphore protection for connect/disconnect
-- PROBE message filtering
-- First message as `ThunderPropagatorConnectionResponse`
-
-**Thread-safety**: Semaphore-protected state transitions
-
-[↑ Back to top](#contents)
-
----
-
-### IThunderPropagatorConnection
-
-**Kind**: Interface (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Connections`  
-**Implements**: `IDisposable`, `IAsyncDisposable`
-
-Public contract for connection operations.
-
-**Members**:
-
-- `ConnectionId: string` — Connection identifier
-- `ConnectionState: ThunderPropagatorConnectionState` — Current state
-- `ConnectionInfo: ThunderPropagatorConnectionResponse` — Connection details
-- `ConnectAsync()` — Establish connection
-- `DisconnectAsync()` — Close connection
-- `SendAsync(message)` — Send message (internal visibility)
-
-**Events**:
-
-- `ConnectionStateChanged` — State transitions
-- `MessageReceived` — New message (async Task-based)
-
-[↑ Back to top](#contents)
-
----
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`AbstractThunderPropagatorConfiguration`](#abstractthunderpropagatorconfiguration) | class | Represents the AbstractThunderPropagatorConfiguration class. | `ServiceConfiguration` | — |
+| [`Task`](#task) | delegate | Represents the Task delegate. | — | `Logger`, `ConnectionConfiguration`, `ConnectionId`, `ConnectionInfo`, `OnPropertyChanged(…)`, `OnMessageReceived(…)` |
+| [`IThunderPropagatorConnection`](#ithunderpropagatorconnection) | interface | Represents the IThunderPropagatorConnection interface. | `IDisposable,` | `SendAsync(…)` |
 
 ### AbstractThunderPropagatorConfiguration
 
-**Kind**: Abstract class (public)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Infrastructure.Connections`  
-**Inherits**: `ServiceConfiguration` (from BuildingBlocks)
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Connections`
+- **Inherits/implements:** `ServiceConfiguration`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the AbstractThunderPropagatorConfiguration class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-Base configuration for all protocol configurations.
-
-**Key Properties**:
-
-- `Uri: string` — Server URI (required for most protocols)
-
-Uses Get/Set pattern:
+**Usage recipe**
 
 ```csharp
-public string Uri
-{
-    get => Get<string>()!;
-    set => Set(value);
-}
+// Resolve AbstractThunderPropagatorConfiguration from the configured service container or construct it with its declared dependencies.
 ```
 
 [↑ Back to top](#contents)
 
----
+### Task
+
+- **Kind:** delegate
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Connections`
+- **Inherits/implements:** None declared
+- **Attributes:** None detected
+- **Key members:** `Logger`, `ConnectionConfiguration`, `ConnectionId`, `ConnectionInfo`, `OnPropertyChanged(…)`, `OnMessageReceived(…)`
+- **Summary:** Represents the Task delegate.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve Task from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+### IThunderPropagatorConnection
+
+- **Kind:** interface
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Infrastructure.Connections`
+- **Inherits/implements:** `IDisposable,`
+- **Attributes:** None detected
+- **Key members:** `SendAsync(…)`
+- **Summary:** Represents the IThunderPropagatorConnection interface.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
+
+**Usage recipe**
+
+```csharp
+// Resolve IThunderPropagatorConnection from the configured service container or construct it with its declared dependencies.
+```
+
+[↑ Back to top](#contents)
+
+## Serialization and Contracts
+
+Serialization behavior is part of the public wire or persistence contract in this area. Preserve field names, ordering rules, content negotiation, and backward-compatibility expectations when changing these types.
+
+## Validation and Constraints
+
+Inputs are validated at component boundaries. Callers should provide non-null required values and handle domain or argument exceptions without retrying invalid requests unchanged.
+
+## Performance Notes
+
+This area contains performance-sensitive constructs such as pooled buffers, spans, asynchronous value types, or concurrent collections. Avoid unnecessary allocations and blocking calls on streaming or message-processing paths.
 
 ## Diagrams
 
-### Connection State Transitions
+### Component overview
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Ready: Created
-    Ready --> Connecting: ConnectAsync()
-    Connecting --> Open: Success
-    Connecting --> HasError: Failed
-    Open --> Closed: DisconnectAsync()
-    Open --> HasError: Error
-    HasError --> Connecting: Reconnect
-    Closed --> [*]
+graph TD
+  Current["Connections"]
+  Current --> T0["AbstractThunderPropagatorConfiguration"]
+  Current --> T1["Task"]
+  Current --> T2["IThunderPropagatorConnection"]
 ```
 
-[↑ Back to top](#contents)
+The diagram shows the direct components documented by the **Connections** area.
 
----
+## Examples
+
+Start with `AbstractThunderPropagatorConfiguration` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Connections](../../Connections/README.md) — Protocol-specific connection implementations
-- [Infrastructure](../README.md) — Parent infrastructure overview
+- [Parent area](../README.md)
+- [Channels](../Channels/README.md)
+- [Loggers](../Loggers/README.md)
+- [Requests](../Requests/README.md)
+- [Responses](../Responses/README.md)
 
 [↑ Back to top](#contents)

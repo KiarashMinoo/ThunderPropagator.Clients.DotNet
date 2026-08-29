@@ -1,132 +1,104 @@
-# Connections / Quic
+# Quic
 
 ## Contents
 
 - [Overview](#overview)
 - [Files](#files)
-- [Types & Members](#types--members)
+- [Types and Members](#types-and-members)
+- [Serialization and Contracts](#serialization-and-contracts)
+- [Validation and Constraints](#validation-and-constraints)
+- [Performance Notes](#performance-notes)
 - [Diagrams](#diagrams)
-- [Usage Examples](#usage-examples)
+- [Examples](#examples)
 - [See Also](#see-also)
 
 ## Overview
 
-The Quic subdirectory contains the QUIC (HTTP/3) protocol implementation for ThunderPropagator connections. QUIC is a modern transport protocol offering low latency, multiplexing, and improved connection migration. Requires TLS 1.3 and libmsquic support.
+The **Quic** area groups 2 documented types, including `ThunderPropagatorQuicConnection`, `ThunderPropagatorQuicConnectionConfiguration`. It provides the contracts and implementation used by this part of ThunderPropagator.Clients.DotNet.
 
 ## Files
 
-| File | Primary Type | LOC (approx) | Responsibility |
-|------|-------------|--------------|----------------|
-| ThunderPropagatorQuicConnection.cs | ThunderPropagatorQuicConnection | ~90 | QUIC connection implementation |
-| ThunderPropagatorQuicConnectionConfiguration.cs | ThunderPropagatorQuicConnectionConfiguration | ~63 | QUIC-specific configuration |
+| File | Primary type(s)/symbol(s) | LOC (approx.) | Responsibility |
+|---|---|---:|---|
+| `ThunderPropagatorQuicConnection.cs` | `ThunderPropagatorQuicConnection` | 84 | Defines ThunderPropagatorQuicConnection and its related behavior. |
+| `ThunderPropagatorQuicConnectionConfiguration.cs` | `ThunderPropagatorQuicConnectionConfiguration` | 63 | Defines ThunderPropagatorQuicConnectionConfiguration and its related behavior. |
 
-## Types & Members
+## Types and Members
+
+| Type | Kind | Summary | Inherits/Implements | Key Members |
+|---|---|---|---|---|
+| [`ThunderPropagatorQuicConnection`](#thunderpropagatorquicconnection) | class | Represents the ThunderPropagatorQuicConnection class. | `AbstractThunderPropagatorConnection<ThunderPropagatorQuicConnectionConfiguration>` | `InternalConnectAsync(…)`, `InternalDisconnectAsync(…)`, `ReceiveAsync(…)`, `InternalSendAsync(…)`, `DisposeManagedResourcesAsync(…)` |
+| [`ThunderPropagatorQuicConnectionConfiguration`](#thunderpropagatorquicconnectionconfiguration) | class | Represents the ThunderPropagatorQuicConnectionConfiguration class. | `AbstractThunderPropagatorConfiguration` | — |
 
 ### ThunderPropagatorQuicConnection
 
-**Kind**: Class (internal, sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Connections.Quic`  
-**Inherits**: `AbstractThunderPropagatorConnection<ThunderPropagatorQuicConnectionConfiguration>`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Connections.Quic`
+- **Inherits/implements:** `AbstractThunderPropagatorConnection<ThunderPropagatorQuicConnectionConfiguration>`
+- **Attributes:** None detected
+- **Key members:** `InternalConnectAsync(…)`, `InternalDisconnectAsync(…)`, `ReceiveAsync(…)`, `InternalSendAsync(…)`, `DisposeManagedResourcesAsync(…)`
+- **Summary:** Represents the ThunderPropagatorQuicConnection class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-QUIC protocol connection using .NET's `QuicConnection`. Supports bidirectional and unidirectional streams.
-
-**Key Constructor**:
+**Usage recipe**
 
 ```csharp
-internal ThunderPropagatorQuicConnection(
-    ThunderPropagatorQuicConnectionConfiguration connectionConfiguration,
-    ILoggerProvider loggerProvider)
+// Resolve ThunderPropagatorQuicConnection from the configured service container or construct it with its declared dependencies.
 ```
 
-Validates QUIC support and TLS 1.3 availability. Throws `InvalidOperationException` if QUIC is not supported.
-
-**Overridden Methods**:
-
-- `InternalConnectAsync()` — Establishes QUIC connection
-- `InternalDisconnectAsync()` — Closes connection with error code 0x0C
-- `ReceiveAsync()` — Accepts inbound stream and reads until completion
-- `InternalSendAsync()` — Opens outbound stream, writes message, completes writes
-
 [↑ Back to top](#contents)
-
----
 
 ### ThunderPropagatorQuicConnectionConfiguration
 
-**Kind**: Class (public, sealed in release builds)  
-**Namespace**: `ThunderPropagator.Clients.DotNet.Connections.Quic`  
-**Inherits**: `AbstractThunderPropagatorConfiguration`
+- **Kind:** class
+- **Namespace:** `ThunderPropagator.Clients.DotNet.Connections.Quic`
+- **Inherits/implements:** `AbstractThunderPropagatorConfiguration`
+- **Attributes:** None detected
+- **Key members:** Refer to the API surface in the source package
+- **Summary:** Represents the ThunderPropagatorQuicConnectionConfiguration class.
+- **Thread safety:** Follow the lifetime and concurrency guarantees of the owning component; no additional guarantee is inferred.
 
-**Key Properties**:
+**Usage recipe**
 
-- `RemoteEndPoint: EndPoint` — QUIC server endpoint (required)
-- `DefaultStreamErrorCode: long` — Default: 0x0A
-- `DefaultCloseErrorCode: long` — Default: 0x0B
-- `MaxInboundBidirectionalStreams: int` — Default: 0
-- `MaxInboundUnidirectionalStreams: int` — Default: 0
-- `SslProtocols: string[]` — Application protocols for TLS negotiation
-- `StreamType: QuicStreamType` — Bidirectional or Unidirectional streams
-- `BufferSize: int` — Receive buffer size, default: 4096 bytes
+```csharp
+// Resolve ThunderPropagatorQuicConnectionConfiguration from the configured service container or construct it with its declared dependencies.
+```
 
 [↑ Back to top](#contents)
 
----
+## Serialization and Contracts
+
+Serialization behavior is part of the public wire or persistence contract in this area. Preserve field names, ordering rules, content negotiation, and backward-compatibility expectations when changing these types.
+
+## Validation and Constraints
+
+Inputs are validated at component boundaries. Callers should provide non-null required values and handle domain or argument exceptions without retrying invalid requests unchanged.
+
+## Performance Notes
+
+This area contains performance-sensitive constructs such as pooled buffers, spans, asynchronous value types, or concurrent collections. Avoid unnecessary allocations and blocking calls on streaming or message-processing paths.
 
 ## Diagrams
 
-### QUIC Stream Flow
+### Component overview
 
 ```mermaid
-sequenceDiagram
-    participant Conn as QuicConnection
-    participant QuicConn as System.Net.Quic
-    participant Server as QUIC Server
-    
-    Conn->>QuicConn: ConnectAsync(options)
-    QuicConn->>Server: QUIC handshake (TLS 1.3)
-    Server-->>QuicConn: Connection established
-    
-    loop Message Receiving
-        Conn->>QuicConn: AcceptInboundStreamAsync()
-        Server->>QuicConn: Open inbound stream
-        QuicConn-->>Conn: QuicStream
-        Conn->>QuicConn: ReadAsync(buffer)
-        Server->>QuicConn: Stream data
-        QuicConn-->>Conn: Bytes
-        Conn->>Conn: Accumulate until stream closed
-        Conn->>Conn: UTF-8 decode
-    end
-    
-    Conn->>QuicConn: CloseAsync(0x0C)
-    QuicConn->>Server: Close connection
+graph TD
+  Current["Quic"]
+  Current --> T0["ThunderPropagatorQuicConnection"]
+  Current --> T1["ThunderPropagatorQuicConnectionConfiguration"]
 ```
 
-[↑ Back to top](#contents)
+The diagram shows the direct components documented by the **Quic** area.
 
----
+## Examples
 
-## Usage Examples
-
-```csharp
-var config = new ThunderPropagatorQuicConnectionConfiguration
-{
-    RemoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.1.100"), 443),
-    SslProtocols = new[] { "h3" },  // HTTP/3
-    StreamType = QuicStreamType.Bidirectional,
-    BufferSize = 8192
-};
-
-var connection = new ThunderPropagatorQuicConnection(config, loggerProvider);
-await connection.ConnectAsync();
-```
-
-[↑ Back to top](#contents)
-
----
+Start with `ThunderPropagatorQuicConnection` as the primary entry point for this folder, then follow its linked contracts and collaborators.
 
 ## See Also
 
-- [Connections](../README.md) — Parent connections overview
-- [Infrastructure/Connections](../../Infrastructure/Connections/README.md) — Abstract connection base
+- [Parent area](../README.md)
+- [InfiniteDataStream](../InfiniteDataStream/README.md)
+- [WebSocket](../WebSocket/README.md)
 
 [↑ Back to top](#contents)
