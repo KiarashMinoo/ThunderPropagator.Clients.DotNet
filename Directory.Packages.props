@@ -1,9 +1,31 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
-    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
   </PropertyGroup>
-  
-  <!-- Central package versions - currently managed in project files due to platform-specific packages -->
-  <!-- ThunderPropagator.BuildingBlocks version controlled in project file due to dynamic package ID -->
-  
+  <!-- ThunderPropagator family â€” Include uses the $(BuildingBlocksPackageId) property
+       Shared.PackageIds.props defines (via the full router now imported through
+       SharedProps.props) instead of a locally-redefined copy of the same property
+       (previously declared directly in ThunderPropagator.Clients.DotNet.csproj). This
+       is also the exact pattern Update-ThunderPropagatorDependencies.ps1's regex looks
+       for (Include="$(...PackageId)") to auto-discover an entry, so this repo's one
+       family dependency is now covered by the restore-time dependency-version check
+       like every other repo that imports the router. -->
+  <ItemGroup Label="ThunderPropagatorFamily">
+    <PackageVersion Include="$(BuildingBlocksPackageId)" Version="$(ThunderPropagatorFloatingVersion)" />
+  </ItemGroup>
+  <ItemGroup Label="Testing Packages">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+  </ItemGroup>
 </Project>

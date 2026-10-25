@@ -59,6 +59,10 @@ Client Layer → Channel Layer → Connection Layer
 - Request/response tracking
 - Property change notifications
 
+## Server compatibility caveat (2026-10-25)
+
+`schema.md` and the language prompts describe the JSON control-plane handshake (`ConnectionResponse`) that the .NET reference implementation uses. The current server speaks `Key=Value` text for the handshake, requests and responses, picks the push format server-side (`SerializerType`, default NJson, no client negotiation), returns 403 for bad credentials, and requires a fresh `RequestId` when re-subscribing. Until the .NET client is reconciled (see `.github/issue-drafts/01-wire-format-mismatch.md`), treat `schema.md` §ConnectionResponse and the "FastSerializer-first" parsing steps as **unverified against the live server**; confirm the contract before implementing a new language client.
+
 ## Version Information
 
 Current .NET Implementation:

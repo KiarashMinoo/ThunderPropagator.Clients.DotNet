@@ -206,11 +206,9 @@ All configurations:
 - Route information (channel, endpoint)
 - Payload data
 
-**ConnectionResponse**:
+**ConnectionResponse** (what the .NET client models today: `ConnectionId`, `IsAvailable`, `PushMessageConfiguration`; the current server actually sends `ConnectionId`, `ClientIPAddress`, `ClientPort`, `ConnectionDateTime`, `IsAvailable`, `User` as `Key=Value` lines and no server version, capabilities or push configuration — see README "Server compatibility caveat"):
 - Connection ID
-- Server version
-- Capabilities
-- Session info
+- Availability flag
 
 **ChannelMetadata**:
 - Encryption settings

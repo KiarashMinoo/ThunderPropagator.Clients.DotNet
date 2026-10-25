@@ -20,6 +20,13 @@
   - non-JSON payloads -> regex split `<channel>,<message>` then `HandleReceivedMessageAsync`
 - Channel state transitions are evented (`ChannelStatusChanged`, `MetadataUpdated`, `ReceivedMessage`) and should be preserved when extending behavior.
 
+## Server compatibility status (checked against the server code, 2026-10-25)
+The client was written against the JSON-era wire contract. The current server (ThunderPropagator core after `#102`) differs; tracked in `.github/issue-drafts/` (create with `create-issues.ps1`):
+- **Control plane is `Key=Value` text on the server** (handshake: `ConnectionId`, `IsAvailable`, ...; responses: `RequestId`, `Route`, `ResponseCode`, `ResponseContent`; requests: `RequestId`, `Route=Channel/Type`, `Content-Type`, `Accept`, `FormData=<payload>`). The client still sends/parses JSON (issue 01). Do not "fix" one side without checking the other.
+- Push format is chosen by the **server's** per-transport `SerializerType` (default NJson); the client only decodes the proprietary comma format (issue 05). There is no `PushMessageFormat` negotiation or `RequestResponseConfiguration` in the handshake today.
+- Bad credentials return **403** (missing credential fields 406), Ping/Metadata are answered before authentication, and a re-subscribe after reconnect needs a **new `RequestId`** (duplicates are rejected).
+- Known client defects: credentials not attached to Subscribe/Unsubscribe (`request is not A and B` precedence, issue 02); WebSocket receive appends the full buffer (issue 03); no heartbeat/reconnect/failover (issues 04, 10).
+
 ## Build/test workflow specifics
 - Always run `dotnet restore` first: `Directory.Build.props` auto-downloads required shared props into `.shared-props/` and build fails fast if missing.
 - Main library targets `net8.0;net9.0;net10.0` (`Directory.Build.props`); tests target `net10.0` (`Tests/*/*.csproj`).

@@ -89,7 +89,9 @@ coverage-*/
 # ============================================================
 # Local Tooling and Agent State
 # ============================================================
-.claude/
+.claude/*
+!.claude/rules/
+!.claude/rules/**
 .codex/
 .obsidian/
 graphify-out/

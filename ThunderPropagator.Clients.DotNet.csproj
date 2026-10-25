@@ -1,12 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Label="ThunderPropagatorPackages">
-        <BuildingBlocksVersion>1.0.1-beta.26</BuildingBlocksVersion>
-        <BuildingBlocksPackageId>ThunderPropagator.BuildingBlocks$(PackageIdConfigurationSuffix)$(PackageIdPlatformSuffix)</BuildingBlocksPackageId>
-    </PropertyGroup>
-
+    <!-- $(BuildingBlocksPackageId) now comes from ThunderPropagator.SharedBuild's
+         Shared.PackageIds.props (imported via SharedProps.props at the repo root) —
+         version is centrally managed in Directory.Packages.props. -->
     <ItemGroup>
-        <PackageReference Include="$(BuildingBlocksPackageId)" Version="$(BuildingBlocksVersion)" />
+        <PackageReference Include="$(BuildingBlocksPackageId)" />
     </ItemGroup>
 
     <ItemGroup>
