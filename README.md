@@ -5,6 +5,8 @@
 These libraries support **.NET 9** and **.NET 8**, and are configured to work across multiple platforms, including **ARM64**, **x64**, **x86**, and **AnyCPU**. They are available as **NuGet packages** and can be installed from the custom NuGet repository:
 **`https://nuget.thunderpropagator.com/v3/index.json`**.
 
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/kiarashminoo/thunderpropagator.clients.dotnet?utm_source=readme&utm_medium=badge)
+
 ---
 
 ## Table of Contents
